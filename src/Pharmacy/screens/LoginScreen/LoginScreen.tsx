@@ -192,6 +192,9 @@ const LoginScreen = () => {
             ) : (
               <SubmitButton text="Login" className="w-full" />
             )}
+            <a className="text-white w-full text-center mb-2" href="/clinic/login">
+              Switch to Virtual Clinic
+            </a>
           </form>
         </div>
       </div>

@@ -129,6 +129,11 @@ const SideBar: FC<SideBarProps> = () => {
 
         {/* WALLET */}
         <div className={`w-full flex flex-col items-start justify-center`}>
+          {userType === "PATIENT" && (
+            <a className="w-full text-center mb-2" href="/clinic/dashboard">
+              Switch to Clinic
+            </a>
+          )}
           <div className={`${styles.walletText} mb-1`}>MY WALLET</div>
           <div className="flex items-end">
             <p className={`${styles.walletValue}`}>

@@ -60,6 +60,8 @@ const LoginScreen2 = () => {
   });
 
   const navigateToMainScreen = () => {
+    console.log("USER TYPE: ", userType);
+
     if (userType === "DOCTOR" || userType === "PATIENT") {
       navigate("/dashboard");
     } else if (userType === "ADMIN") {
@@ -196,6 +198,12 @@ const LoginScreen2 = () => {
             ) : (
               <SubmitButton text="Login" className="w-full" />
             )}
+            <a
+              className="text-white w-full text-center mb-2"
+              href="/pharmacy/login"
+            >
+              Switch to Pharmacy
+            </a>
           </form>
         </div>
       </div>
