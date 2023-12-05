@@ -147,11 +147,6 @@ const DoctorInfoScreen = () => {
     // create appointment
     // // Params: patientId, doctorId, date, status (enum: ["UPCOMING", "CANCELLED", "COMPLETED"])
     
-      "Appointment for: " + isCheckboxChecked &&
-        selectedFamilyMemberObj?.familyMember?.type === "GUEST"
-        ? "GUEST"
-        : "PATIENT"
-    // );
     await dispatch(
       createAppointmentAction({
         patientId: isCheckboxChecked ? selectedFamilyMember : userData._id,
