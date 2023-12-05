@@ -1,3 +1,34 @@
+# Live Website
+
+https://el7ani.vercel.app/
+
+
+# Test Credentials
+
+Patient:
+
+Username: seifhany
+password: Seif@123
+
+
+Doctor:
+
+Username: jackson
+password: Jack@123
+
+
+Pharmacist:
+
+Username: minter
+password: Minter@123
+
+
+Admin:
+
+Username: seifadmin
+password: Seif@123
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
