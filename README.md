@@ -1,32 +1,28 @@
 # Live Website
 
-https://el7ani.vercel.app/
+el7ani.vercel.app
 
 
 # Test Credentials
 
-Patient:
-
-Username: seifhany
-password: Seif@123
-
-
-Doctor:
-
-Username: jackson
-password: Jack@123
+<b>Patient:</b> </br>
+Username: seifhany </br>
+Password: Seif@123 </br>
 
 
-Pharmacist:
+<b>Doctor:</b> </br>
+Username: jackson </br>
+Password: Jack@123 </br> 
 
-Username: minter
-password: Minter@123
+
+<b>Pharmacist:</b> </br>
+Username: minter </br>
+Password: Minter@123 </br>
 
 
-Admin:
-
-Username: seifadmin
-password: Seif@123
+<b>Admin:</b> </br>
+Username: seifadmin </br>
+Password: Seif@123 </br>
 
 
 # Getting Started with Create React App
