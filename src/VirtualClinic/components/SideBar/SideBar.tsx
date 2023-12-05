@@ -126,7 +126,7 @@ const SideBar: FC<SideBarProps> = () => {
 
         {/* WALLET */}
         <div className={`w-full flex flex-col items-start justify-center`}>
-          {userType === "PATIENT" && (
+          {(userType === "PATIENT" ||  userType === "ADMIN") && (
             <a className="w-full text-center mb-2" href="/pharmacy/dashboard">
               Switch to Pharmacy
             </a>
