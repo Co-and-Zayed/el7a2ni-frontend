@@ -34,6 +34,7 @@ import ViewPackageScreen from "VirtualClinic/screens/VirtualClinicScreens/User S
 import MyFamilyPackagesScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/PackagesScreen/MyFamilyPackagesScreen";
 import FamilyMemberPackageScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/PackagesScreen/FamilyMemberPackageScreen";
 import VideoCallScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/VideoCallScreen/VideoCallScreen";
+import ChatScreen from "VirtualClinic/screens/VirtualClinicScreens/ChatScreen/ChatScreen";
 
 export const routes = [
   {
@@ -194,5 +195,11 @@ export const routes = [
     path: Routes.RESET_PASSWORD,
     system: "/clinic",
     element: <ForgetPasswordScreen />,
+  },
+  {
+    path: Routes.CHAT_PATH,
+    system: "/clinic",
+    element: <ChatScreen />,
+    parent: <ProtectedRoutes />,
   },
 ];

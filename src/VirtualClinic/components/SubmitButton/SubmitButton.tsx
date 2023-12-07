@@ -2,7 +2,7 @@ import styles from "VirtualClinic/components/SubmitButton/SubmitButton.module.cs
 import { FC } from "react";
 
 interface SubmitButtonProps {
-  text?: string;
+  text: string;
   onClick?: () => void;
   style?: any;
   className?: string;

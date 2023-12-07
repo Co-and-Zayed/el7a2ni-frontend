@@ -1,8 +1,8 @@
 const fs = require("fs");
 const cheerio = require("cheerio");
 
-const svgDirectory = "src/assets/icons";
-const outputDirectory = "src/assets/IconComponents";
+const svgDirectory = "src/Pharmacy/assets/icons";
+const outputDirectory = "src/Pharmacy/assets/IconComponents";
 
 fs.readdirSync(svgDirectory).forEach((file) => {
   if (file.endsWith(".svg")) {

@@ -1,5 +1,6 @@
 export { default as AppointmentsIcon } from "./AppointmentsIcon";
 export { default as BackIcon } from "./BackIcon";
+export { default as ChatIcon } from "./ChatIcon";
 export { default as CreditCardIcon } from "./CreditCardIcon";
 export { default as DashboardIcon } from "./DashboardIcon";
 export { default as DoctorsIcon } from "./DoctorsIcon";

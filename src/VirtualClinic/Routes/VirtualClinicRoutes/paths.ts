@@ -34,3 +34,5 @@ export const MY_FAMILY_PACKAGES_PATH = "/viewFamilyPackages";
 export const FAMILY_MEMBER_PACKAGE_PATH = "/familyMemberPackage";
 
 export const VIDEO_CALL_PATH = "/video-call";
+
+export const CHAT_PATH = "/chats";

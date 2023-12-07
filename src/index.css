@@ -6,6 +6,7 @@
   --light-green: #8ac186;
   --light-green-7: #8ac186b3;
   --light-green-5: #8ac1868c;
+  --light-green-1: #8ac1862a;
   --dark-green: #163b45;
   --blue: #86bec2;
   --faded-green: #5e747e;
@@ -153,7 +154,8 @@ input:-internal-autofill-selected {
 }
 
 .threeLineEllipsis,
-.twoLineEllipsis {
+.twoLineEllipsis,
+.oneLineEllipsis {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -165,6 +167,10 @@ input:-internal-autofill-selected {
 
 .twoLineEllipsis {
   -webkit-line-clamp: 2;
+}
+
+.oneLineEllipsis {
+  -webkit-line-clamp: 1;
 }
 
 /* CALENDAR
