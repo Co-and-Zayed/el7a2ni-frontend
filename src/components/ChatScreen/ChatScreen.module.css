@@ -1,7 +1,7 @@
 .inboxContainer,
 .chatContainer {
   height: 50rem;
-  overflow: hidden;
+  overflow: auto;
   border-radius: 1rem;
   box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
 }
@@ -76,6 +76,7 @@
   padding-block: 0.5rem;
   max-width: 23rem;
   border-radius: var(--large-radius);
+  transition: all 0.3s ease-in-out;
 }
 
 .time {
@@ -144,4 +145,9 @@
 
 .sendButton:active {
   transform: scale(0.975);
+}
+
+.activeChat {
+  /* border-color: var(--light-green); */
+  background-color: rgba(0, 0, 0, 0.05);
 }

@@ -163,7 +163,10 @@ const DoctorCard: FC<DoctorCardProps> = ({
           {/* BOOK A SESSION LINK */}
           {!noBooking && (
             <a
-              href="chats"
+              onClick={() => {
+                // navigate("/chat/" + doctor?.username);
+                navigate("/chats");
+              }}
               // onClick={(event) => {
               //   getDoctorName(event, doctor?.username);
               // }}
