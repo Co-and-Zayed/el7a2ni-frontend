@@ -39,7 +39,9 @@ const DashboardScreen = () => {
   }, []);
 
   useEffect(() => {
-    console.log("allContracts", allContracts[0]);
+    if (allContracts && allContracts?.length > 0) {
+      console.log("allContracts", allContracts[0]);
+    }
   }, [allContracts]);
 
   const generateExpandable = (record: any) => {
