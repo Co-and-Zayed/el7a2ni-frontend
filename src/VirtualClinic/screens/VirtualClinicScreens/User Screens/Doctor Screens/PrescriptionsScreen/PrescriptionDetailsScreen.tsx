@@ -12,8 +12,7 @@ const DoctorPrescriptionDetailsScreen = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch: any = useDispatch();
 
-  const [editableMedicineId, setEditableMedicineId] = useState<string | null>(
-    null
+  const [editableMedicineId, setEditableMedicineId] = useState<string | null>(null
   );
   const [editedDosage, setEditedDosage] = useState<string>("");
   const [editedQuantity, setEditedQuantity] = useState<string>("");
