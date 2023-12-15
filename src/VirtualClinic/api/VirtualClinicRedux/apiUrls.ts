@@ -178,3 +178,6 @@ export const deleteMedicineFromPrescription = () => {
 export const addPrescription = () => {
   return `doctor/addPrescription`;
 };
+export const updatePrescription = () => {
+  return `doctor/updatePrescription`;
+};
