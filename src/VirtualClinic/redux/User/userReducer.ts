@@ -30,6 +30,7 @@ export const userReducer = (state = initialState, action: any) => {
     case UPDATE_ACCESS_TOKEN:
       return { ...state, accessToken: action.payload };
     case LOGIN_USER:
+      console.log("LOGIN_USER", action.payload);
       return {
         ...state,
         userType: action.payload?.type,
@@ -38,6 +39,7 @@ export const userReducer = (state = initialState, action: any) => {
         refreshToken: action.payload?.tokens?.refreshToken,
       };
     case UPDATE_USER_DATA:
+      console.log("UPDATE_USER_DATA", action.payload);
       return {
         ...state,
         userData: action.payload,

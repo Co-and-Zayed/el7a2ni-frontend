@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import DoctorCard from "VirtualClinic/components/DoctorCard/DoctorCard";
 
 const DashboardScreen = () => {
-  const { userData } = useSelector((state: RootState) => state.userReducer);
+  const { userData, userType } = useSelector((state: RootState) => state.userReducer);
 
   const [myDoctors, setMyDoctors] = useState<any[]>([]);
 
@@ -28,6 +28,8 @@ const DashboardScreen = () => {
 
   useEffect(() => {
     getMyDoctors();
+    console.log("USER TYPE")
+    console.log(userType)
   }, []);
 
   const { handleDownload } = useFunctions();

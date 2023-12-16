@@ -102,6 +102,7 @@ const PatientsScreen = () => {
     mobileNumber: string;
     emergencyContactName: string;
     emergencyContactNumber: string;
+    id: string;
   }
 
   const columns: ColumnsType<DataType> = [
@@ -243,6 +244,18 @@ const PatientsScreen = () => {
             </Button>
           </div>
         );
+      },
+    },
+    {
+      title: "Send Message",
+      dataIndex: "sendMessage",
+      key: "sendMessage",
+      render: (id, record: any) => {
+        console.log("id");
+        console.log(id);
+        console.log("record");
+        console.log(record);
+        return <a href={`/clinic/chats/${record?._id}`}>Send Message</a>;
       },
     },
   ];

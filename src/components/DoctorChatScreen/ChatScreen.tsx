@@ -14,7 +14,7 @@ import * as Firestore from "firebase/firestore";
 import firebaseConfig from "firebaseConfig";
 import { app, firestore } from "my-firebase";
 import { createClient } from "@supabase/supabase-js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "VirtualClinic/redux/rootReducer";
 import { motion } from "framer-motion";
 import { useFunctions } from "hooks/useFunctions";
@@ -22,6 +22,7 @@ import { useTimeFormat } from "hooks/useTimeFormat";
 import { useParams } from "react-router";
 import api from "VirtualClinic/api";
 import JellyLoader from "VirtualClinic/components/JellyLoader/JellyLoader";
+import { listAllPatientsAction } from "VirtualClinic/redux/VirtualClinicRedux/ListAllPatients/listAllPatientsAction";
 
 const SUPABASE_URL: string = process.env.REACT_APP_SUPABASE_URL ?? "";
 const SUPABASE_KEY: string = process.env.REACT_APP_SUPABASE_KEY ?? "";
@@ -31,13 +32,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const ChatScreen = () => {
   const isLoggedIn = true;
   const navigate = useNav();
+  const dispatch: any = useDispatch();
   const [currentChat, setCurrentChat] = useState<any>(null);
 
   // get recepient user id from search params using useParams
 
   const [messages, setMessages] = useState<any>([]);
   const [newMessage, setNewMessage] = useState<any>("");
-  const [myDoctors, setMyDoctors] = useState<any[]>([]);
   const [messagesLoading, setMessagesLoading] = useState<boolean>(false);
   const chatContainerRef = useRef(null);
 
@@ -48,13 +49,17 @@ const ChatScreen = () => {
   const { formatDate } = useTimeFormat();
   const { recepientId } = useParams<any>();
 
+  const { patientsLoading, allPatients } = useSelector(
+    (state: RootState) => state.listAllPatientsReducer
+  );
+
   useEffect(() => {
     console.log("recepient id: ", recepientId);
     updateMessages();
   }, [recepientId]);
 
   useEffect(() => {
-    getMyDoctors();
+    dispatch(listAllPatientsAction({ doctorUsername: userData?.username })); // sending the request, and update the states
   }, []);
 
   // Create a function to handle inserts
@@ -153,7 +158,7 @@ const ChatScreen = () => {
   const renderInboxItem = (data: {
     id: string;
     name: string;
-    specialty: string;
+    username: string;
   }) => {
     return (
       <div
@@ -173,7 +178,7 @@ const ChatScreen = () => {
         <div className="flex flex-col gap-0">
           <p className={`${styles.doctorName}`}>{data.name}</p>
           <p className={`${styles.doctorSpecialty} oneLineEllipsis`}>
-            {data.specialty}
+            {data.username}
           </p>
         </div>
       </div>
@@ -186,23 +191,23 @@ const ChatScreen = () => {
     // });
 
     if (userData) {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_CLINIC}patient/getMyDoctors`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            patientId: userData?._id,
-          }),
-        }
-      );
+      // const res = await fetch(
+      //   `${process.env.REACT_APP_BACKEND_CLINIC}patient/getMyDoctors`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${accessToken}`,
+      //     },
+      //     body: JSON.stringify({
+      //       patientId: userData?._id,
+      //     }),
+      //   }
+      // );
       // setMyDoctors(res);
       console.log("MY DOCTORS");
       // console.log(await res?.json());
-      setMyDoctors(await res?.json());
+      // setMyDoctors(await res?.json());
     } else {
       console.log("WTF");
       console.log(userData);
@@ -212,11 +217,11 @@ const ChatScreen = () => {
   return (
     <div className="w-full flex gap-4 items-center justify-center pt-12">
       <div className={`${styles.inboxContainer}`}>
-        {myDoctors?.map((doctor: any, idx: number) => {
+        {allPatients?.map((patient: any, idx: number) => {
           return renderInboxItem({
-            id: doctor?._id,
-            name: doctor?.name,
-            specialty: doctor?.specialty,
+            id: patient?._id,
+            name: patient?.name,
+            username: patient?.username,
           });
         })}
       </div>

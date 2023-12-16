@@ -47,6 +47,7 @@ const SideBar: FC<SideBarProps> = () => {
   }) => {
     return (
       <div
+        key={link.name}
         className={`${styles.linkContainer} ${
           currentLink === link.index ? styles.activeLink : styles.nonActiveLink
         } flex items-center`}
@@ -126,7 +127,7 @@ const SideBar: FC<SideBarProps> = () => {
 
         {/* WALLET */}
         <div className={`w-full flex flex-col items-start justify-center`}>
-          {(userType === "PATIENT" ||  userType === "ADMIN") && (
+          {(userType === "PATIENT" || userType === "ADMIN") && (
             <a className="w-full text-center mb-2" href="/pharmacy/dashboard">
               Switch to Pharmacy
             </a>

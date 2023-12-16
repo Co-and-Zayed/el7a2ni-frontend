@@ -38,12 +38,6 @@ const DashboardScreen = () => {
     console.log("USERDATA", userData);
   }, []);
 
-  useEffect(() => {
-    if (allContracts && allContracts?.length > 0) {
-      console.log("allContracts", allContracts[0]);
-    }
-  }, [allContracts]);
-
   const generateExpandable = (record: any) => {
     return (
       <div>

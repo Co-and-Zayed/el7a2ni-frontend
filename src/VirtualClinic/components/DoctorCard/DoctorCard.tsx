@@ -165,7 +165,7 @@ const DoctorCard: FC<DoctorCardProps> = ({
             <a
               onClick={() => {
                 // navigate("/chat/" + doctor?.username);
-                navigate("/chats");
+                navigate(`/chats/${doctor?._id}`);
               }}
               // onClick={(event) => {
               //   getDoctorName(event, doctor?.username);

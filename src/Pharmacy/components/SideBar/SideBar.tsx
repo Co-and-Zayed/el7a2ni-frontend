@@ -47,6 +47,7 @@ const SideBar: FC<SideBarProps> = () => {
   }) => {
     return (
       <div
+        key={link.index}
         className={`${styles.linkContainer} ${
           currentLink === link.index ? styles.activeLink : styles.nonActiveLink
         } flex items-center`}

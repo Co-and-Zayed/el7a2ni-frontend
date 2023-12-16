@@ -28,10 +28,6 @@ const DashboardScreen = () => {
     console.log("USERDATA", userData);
   }, []);
 
-  useEffect(() => {
-    console.log("allContracts", allContracts[0]);
-  }, [allContracts]);
-
   const handleContractRequest = async (ID: any, values: any) => {
     const res: any = await fetch(
       `${process.env.REACT_APP_BACKEND_PHARMACY}pharmacist/${values}Contract`,

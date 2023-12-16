@@ -35,4 +35,4 @@ export const FAMILY_MEMBER_PACKAGE_PATH = "/familyMemberPackage";
 
 export const VIDEO_CALL_PATH = "/video-call";
 
-export const CHAT_PATH = "/chats";
+export const CHAT_PATH = "/chats/:recepientId";
