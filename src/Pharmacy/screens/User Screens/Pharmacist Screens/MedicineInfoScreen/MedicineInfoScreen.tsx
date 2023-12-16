@@ -41,6 +41,8 @@ import AnimatedDigits from "Pharmacy/components/AnimatedDigits/AnimatedDigits";
 import AnimatedDigitsLarge from "Pharmacy/components/AnimatedDigitsLarge/AnimatedDigitsLarge";
 import { set } from "mongoose";
 import UploadButton from "Pharmacy/components/UploadButton/UploadButton";
+import { archiveMedicineAction } from "Pharmacy/redux/PharmacyRedux/ArchiveMedicine/archiveMedicineAction";
+import { unarchiveMedicineAction } from "Pharmacy/redux/PharmacyRedux/UnarchiveMedicine/unarchiveMedicineAction";
 
 //////////////////////////////////// START OF CODE
 interface DataType {
@@ -293,7 +295,44 @@ const MedicineInfoScreen: FC = (
                       </div>
                     </div>
                   </div>
-
+                  
+                    {
+                      medicine?.status === "AVAILABLE" && userType === "PHARMACIST" && (
+                        <Button
+                          // type="primary"
+                          className={`text-lg w-30 h-10 rounded-md`}
+                          onClick={() => {
+                              dispatch(
+                                archiveMedicineAction({
+                                  _id: medicine?._id,
+                                })
+                              );
+                              window.location.reload();
+                          }}
+                        >
+                          Archive
+                        </Button>
+                      )
+                    }
+                    {
+                      medicine?.status === "ARCHIVED" && userType === "PHARMACIST" && (
+                        <Button
+                          // type="primary"
+                          className={`text-lg w-30 h-10 rounded-md`}
+                          onClick={() => {
+                              dispatch(
+                                unarchiveMedicineAction({
+                                  _id: medicine?._id,
+                                })
+                              );
+                              window.location.reload();
+                          }}
+                        >
+                          Unarchive
+                        </Button>
+                      )
+                    }
+                    
                   {
                     // edit button
                     userType === "PHARMACIST" && (

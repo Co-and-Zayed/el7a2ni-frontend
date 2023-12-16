@@ -13,6 +13,7 @@ import NotFoundScreen from "Pharmacy/screens/NotFoundScreen/NotFoundScreen";
 import BuyMedicineScreen from "Pharmacy/screens/User Screens/Patient Screens/MedicineScreen/BuyMedicineScreen";
 import OrderScreen from "Pharmacy/screens/User Screens/Patient Screens/OrderScreen/OrderScreen";
 import ForgotPassword from "Pharmacy/screens/ForgotPasswordScreen/ForgotPassword";
+import ViewSalesReportScreen from "Pharmacy/screens/User Screens/Pharmacist Screens/SalesReportScreen/ViewSalesReportScreen";
 
 const system = "/pharmacy";
 export const routes = [
@@ -100,6 +101,12 @@ export const routes = [
   {
     path: Routes.FORGOT_PASSWORD_PATH,
     element: <ForgotPassword />,
+    system: system,
+  },
+  {
+    path: Routes.VIEW_SALES_REPORT_PATH,
+    parent: <ProtectedRoutes />,
+    element: <ViewSalesReportScreen/>,
     system: system,
   },
 ];

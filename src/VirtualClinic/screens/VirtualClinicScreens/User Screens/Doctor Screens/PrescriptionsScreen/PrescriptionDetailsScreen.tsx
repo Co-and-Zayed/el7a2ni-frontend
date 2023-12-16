@@ -12,7 +12,8 @@ const DoctorPrescriptionDetailsScreen = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch: any = useDispatch();
 
-  const [editableMedicineId, setEditableMedicineId] = useState<string | null>(null
+  const [editableMedicineId, setEditableMedicineId] = useState<string | null>(
+    null
   );
   const [editedDosage, setEditedDosage] = useState<string>("");
   const [editedQuantity, setEditedQuantity] = useState<string>("");
@@ -79,7 +80,18 @@ const DoctorPrescriptionDetailsScreen = () => {
         <JellyLoader />
       ) : (
         <div className={`w-full flex flex-col items-start justify-center`}>
-          {/* ... (other prescription details) */}
+          <h3 className={`font-bold`}>Patient Name:</h3>
+          <p className={`ml-1`}> {prescription?.patientName}</p>
+          <h3 className={`font-bold`}>Doctor Name:</h3>
+          <p className={`ml-1`}>{prescription?.doctorName}</p>
+          <h3 className={`font-bold`}>Date:</h3>
+          <p className={`ml-1`}>
+            {prescription?.date.toString().split("T")[0]}
+          </p>
+          <h3 className={`font-bold`}>Status:</h3>
+          <p className={`ml-1`}>
+            {prescription?.filled ? "Filled" : "Unfilled"}
+          </p>{" "}
           <h3 className={`font-bold`}>Medicines:</h3>
           {prescription?.medicines?.map((medicine: any, index: any) => (
             <div key={index}>

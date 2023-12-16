@@ -59,6 +59,9 @@ import { addMedicineToPrescriptionReducer } from "./VirtualClinicRedux/AddMedici
 import { deleteMedicineFromPrescriptionReducer } from "./VirtualClinicRedux/DeleteMedicineFromPrescription/deleteMedicineFromPrescriptionReducer";
 import { addPrescriptionReducer } from "./VirtualClinicRedux/AddPrescription/addPrescriptionReducer";
 import { updatePrescriptionReducer } from "./VirtualClinicRedux/UpdatePrescription/updatePrescriptionReducer";
+import { viewSalesReportsReducer } from "Pharmacy/redux/PharmacyRedux/ViewSalesReport/viewSalesReportsReducer";
+import { archiveMedicineReducer } from "Pharmacy/redux/PharmacyRedux/ArchiveMedicine/archiveMedicineReducer";
+import { unarchiveMedicineReducer } from "Pharmacy/redux/PharmacyRedux/UnarchiveMedicine/unarchiveMedicinReducer";
 export const appReducer = combineReducers({
   // VIRTUAL CLINIC
   videoCallReducer,
@@ -128,6 +131,9 @@ export const appReducer = combineReducers({
   deleteMedicineFromPrescriptionReducer,
   addPrescriptionReducer,
   updatePrescriptionReducer,
+  viewSalesReportsReducer,
+  archiveMedicineReducer,
+  unarchiveMedicineReducer,
 });
 
 export const rootReducers = (state: any, action: any) => {

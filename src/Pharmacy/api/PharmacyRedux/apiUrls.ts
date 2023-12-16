@@ -97,3 +97,15 @@ export const rejectDoctor = () => {
 export const viewAllContracts = () => {
   return `pharmacist/viewAllContracts`;
 };
+
+export const viewSalesReport = () => {
+  return `pharmacist/viewSalesReport`;
+};
+
+export const archiveMedicine = () => {
+  return `pharmacist/archiveMedicine`;
+};
+
+export const unarchiveMedicine = () => {
+  return `pharmacist/unarchiveMedicine`;
+};

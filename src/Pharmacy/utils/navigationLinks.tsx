@@ -87,6 +87,12 @@ export const navLinksPharmacist = [
     route: Routes.MEDICINE_PATH,
     icon: <PrescriptionsIcon />,
   },
+  {
+    name: "Sales Reports",
+    route: Routes.VIEW_SALES_REPORT_PATH,
+    icon: <PrescriptionsIcon />,
+  },
+
 ];
 
 export const navLinksAdmin = [
@@ -101,6 +107,11 @@ export const navLinksAdmin = [
   {
     name: "Patients",
     route: Routes.VIEW_PATIENTS_PATH,
+  },
+  {
+    name: "Sales Reports",
+    route: Routes.VIEW_SALES_REPORT_PATH,
+    icon: <PrescriptionsIcon />,
   },
 ];
 
