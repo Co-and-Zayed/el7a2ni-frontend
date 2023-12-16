@@ -35,6 +35,7 @@ import CoolCalendar from "VirtualClinic/components/CoolCalendar/CoolCalendar";
 import SearchButton from "VirtualClinic/components/SearchButton/SearchButton";
 import AppointmentCard from "VirtualClinic/components/AppointmentCard/AppointmentCard";
 import { motion } from "framer-motion";
+import { getFamilyMembers } from "VirtualClinic/api/VirtualClinicRedux/apiUrls";
 
 interface DataType {
   patientName: any;
@@ -52,7 +53,7 @@ const AppointmentsScreen = () => {
     (state: RootState) => state.getAppointmentsReducer
   );
 
-  const { userData, userType } = useSelector(
+  const { userData, userType, accessToken } = useSelector(
     (state: RootState) => state.userReducer
   );
 
@@ -63,6 +64,32 @@ const AppointmentsScreen = () => {
   const [pastAppointments, setPastAppointments] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
+  // const handleFamilyMemberRequest = async () => {    
+  //   const res: any = await fetch(
+  //     `${process.env.REACT_APP_BACKEND_CLINIC}patient/getFamilyMemberAppointments`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     }
+  //     );
+  //   const FamilyMembersAppointments = await res.json();
+  // };
+
+  // const data: DataType[] = userAppointments?.map((appointment: any) => {
+  //   const date = moment(appointment.date);
+  //   return {
+  //     patientName: appointment.patient.name,
+  //     doctorName: appointment.doctor.name,
+  //     date: date.toDate(),
+  //     dateStr: date.format("dddd, D MMMM, yyyy"),
+  //     time: date.format("h:mm a"),
+  //     status: appointment.status,
+  //     key: appointment._id,
+  //   };
+  // });
   const data: DataType[] = userAppointments?.map((appointment: any) => {
     const date = moment(appointment.date);
     return {
@@ -75,9 +102,66 @@ const AppointmentsScreen = () => {
       key: appointment._id,
     };
   });
+  
+// Assume data is the existing array of appointments
+
+// Fetch family members' appointments
+const handleFamilyMemberRequest = async () => {
+  try {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_CLINIC}patient/getFamilyMemberAppointments`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch family members' appointments");
+    }
+
+    const familyMembersAppointments = await res.json();
+
+    // Map family members' appointments to the DataType structure
+    const familyMembersData: DataType[] = familyMembersAppointments?.map(
+      (appointment: any) => {
+        const date = moment(appointment.date);
+        return {
+          patientName: appointment.patient.name,
+          doctorName: appointment.doctor.name,
+          date: date.toDate(),
+          dateStr: date.format("dddd, D MMMM, yyyy"),
+          time: date.format("h:mm a"),
+          status: appointment.status,
+          key: appointment._id,
+        };
+      }
+    );
+
+    // Concatenate the two arrays
+    const mergedData: DataType[] = [...data, ...familyMembersData];
+
+    // Dispatch user Appointments with merged Data
+
+    dispatch({
+      type: "GET_APPOINTMENTS_DATA_SUCCESS",
+      payload: mergedData,
+    });
+
+    // Update the state or do something with the mappedAppointments
+  } catch (error) {
+    console.error("Error fetching family members' appointments:", error);
+  }
+};
+
+  
 
   useEffect(() => {
     fetchAppointments();
+    handleFamilyMemberRequest();
   }, []);
 
   async function fetchAppointments() {
@@ -87,6 +171,7 @@ const AppointmentsScreen = () => {
         type: userType,
       })
     );
+    handleFamilyMemberRequest();
 
     updateDaysToHighlight();
   }
@@ -450,6 +535,13 @@ const AppointmentsScreen = () => {
               >
                 Upcoming
               </Button>
+              <Button
+                onClick={() => {
+                  handleFamilyMemberRequest();
+                }}
+              >
+                Family Members
+              </Button>
             </div>
 
             {/* FILTER BY STATUS (upcoming, completed, cancelled, rescheduled) */}
@@ -464,6 +556,8 @@ const AppointmentsScreen = () => {
                   { value: "COMPLETED", label: "Completed" },
                   { value: "CANCELLED", label: "Cancelled" },
                   { value: "RESCHEDULED", label: "Rescheduled" },
+                  { value: "PENDING", label: "Pending" },
+                  { value: "REJECTED", label: "Rejected" },
                 ] as any
               }
               allowClear

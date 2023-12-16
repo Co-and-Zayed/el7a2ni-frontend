@@ -37,6 +37,11 @@ import PayWithWallet from "./PaymentScreens/PayWithWallet";
 import { createAppointmentAction } from "VirtualClinic/redux/VirtualClinicRedux/CreateAppointment/createAppoinmentAction";
 import CoolCalendar from "VirtualClinic/components/CoolCalendar/CoolCalendar";
 import { useNav } from "VirtualClinic/hooks/useNav";
+import { UPDATE_USER_DATA } from "VirtualClinic/redux/User/loginTypes";
+import {
+  POST_APPOINTMENT_DATA_STATE,
+  POST_APPOINTMENT_DATA_SUCCESS,
+} from "VirtualClinic/redux/VirtualClinicRedux/types";
 
 const DoctorInfoScreen = () => {
   //const { name } = useParams<{ name: string }>();   //name of dr
@@ -52,18 +57,52 @@ const DoctorInfoScreen = () => {
     (state: RootState) => state.getFamilyMembersReducer
   );
 
+  const { response_message } = useSelector(
+    (state: RootState) => state.createAppointmentReducer
+  );
+
   const { x, y } = useSelector(
     (state: RootState) => state.getDoctorCardCoordsReducer
   );
 
   const navigate = useNav();
 
+  const isFutureDate = (date: any) => {
+    const now = new Date();
+    const resettedNow = new Date(0); // Reset to the Unix epoch (midnight, January 1, 1970)
+
+    // Reset the time components of the dates to 00:00:00
+    resettedNow.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
+    date.setHours(0, 0, 0, 0);
+
+    return date > resettedNow;
+  };
+
+  const isFutureTime = (timeString: string): boolean => {
+    const now = new Date();
+    const [time, period] = timeString.split(" ");
+    const [hours, minutes] = time.split(":").map(Number);
+
+    // Adjust hours for PM times
+    const adjustedHours = period === "PM" ? hours + 12 : hours;
+
+    const futureTime = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      adjustedHours,
+      minutes
+    );
+
+    return futureTime >= now;
+  };
+
   // booking, paymentMethod, wallet, card, confirmation
   const [page, setPage] = useState("booking");
 
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
 
-  const [timeSlots, setTimeSlots] = useState<any>(generateTimeSlots());
+  const [timeSlots, setTimeSlots] = useState<any>(generateDoctorSlots());
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<any>(null);
 
   const [appointmentDate, setAppointmentDate] = useState<Dayjs | null>(null);
@@ -74,22 +113,66 @@ const DoctorInfoScreen = () => {
   const [selectedFamilyMemberObj, setSelectedFamilyMemberObj] =
     useState<any>(null);
 
+  const [daysToHighlight, setDaysToHighlight] = useState<Dayjs[] | null>(null);
+
+  useEffect(() => {
+    updateDaysToHighlight();
+  }, [docinfo?.slots]);
+
+  function updateDaysToHighlight() {
+    if (docinfo?.slots) {
+      var uniqueDays: dayjs.Dayjs[] = [];
+      docinfo?.slots.forEach((slot: any) => {
+        const date = dayjs(slot.date);
+        if (!uniqueDays.includes(date)) {
+          if (slot.date >= dayjs().toISOString() && !slot?.booked)
+            uniqueDays.push(date);
+        }
+      });
+      setDaysToHighlight(uniqueDays);
+    }
+  }
+
   const { username } = useParams<{ username: string }>();
 
   useEffect(() => {
     document.title = "El7a2ni" + (docinfo && " | " + docinfo.name);
 
     dispatch(getDoctorInfoAction({ username: username }));
-    dispatch(getFamilyMembersAction({ userId: userData._id }, true));
+    dispatch(getFamilyMembersAction({ userId: userData?._id }, true));
   }, []);
 
   useEffect(() => {
     if (docinfo) {
-      
-      
     }
   }, [docinfo]);
 
+  useEffect(() => {
+    setTimeSlots(generateDoctorSlots());
+  }, [selectedDate]);
+
+  function generateDoctorSlots() {
+    const newTimeSlots = docinfo?.slots
+      ?.filter((slot: any) => {
+        const slotDate = new Date(slot?.date);
+        return (
+          slot?.date.split("T")[0] ===
+            selectedDate?.toISOString().split("T")[0] &&
+          (isFutureDate(slotDate) ||
+            (selectedDate?.format("DD/MM/YYYY") === dayjs().format("DD/MM/YYYY")
+              ? // if today, check if time is in the future
+                isFutureTime(slot?.time)
+              : false))
+        );
+      })
+      .map((slot: any) => {
+        return {
+          time: slot?.time,
+          isAvailable: !slot?.booked,
+        };
+      });
+    return newTimeSlots;
+  }
   function generateTimeSlots(): any {
     // all time from 9 am to 5 pm with 30 min interval
     let timeSlots = [];
@@ -125,9 +208,8 @@ const DoctorInfoScreen = () => {
       };
 
       timeSlots.push(timeSlot);
-      minute += 30;
+      hour += 1;
     }
-
     return timeSlots;
   }
 
@@ -141,12 +223,12 @@ const DoctorInfoScreen = () => {
     }
   }, [appointmentDate]);
 
-  async function createAppointmentCallback() {
+  async function createAppointmentCallback(method: string) {
     var date = appointmentDate?.toDate();
 
     // create appointment
     // // Params: patientId, doctorId, date, status (enum: ["UPCOMING", "CANCELLED", "COMPLETED"])
-    
+
     await dispatch(
       createAppointmentAction({
         patientId: isCheckboxChecked ? selectedFamilyMember : userData._id,
@@ -158,9 +240,41 @@ const DoctorInfoScreen = () => {
           selectedFamilyMemberObj?.familyMember?.type === "GUEST"
             ? "GUEST"
             : "PATIENT",
+        amount: getDiscountedPriceForFamilyMember() ?? docinfo?.session_price,
+        method: method,
       })
     );
   }
+
+  useEffect(() => {
+    dispatch({
+      type: POST_APPOINTMENT_DATA_SUCCESS,
+    });
+    dispatch({
+      type: POST_APPOINTMENT_DATA_STATE,
+      payload: false,
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log("response_message", response_message);
+    if (response_message?.user) {
+      dispatch({
+        type: UPDATE_USER_DATA,
+        payload: response_message?.user,
+      });
+      dispatch({
+        type: POST_APPOINTMENT_DATA_STATE,
+        payload: true,
+      });
+      // setPage("confirmation");
+    } else {
+      dispatch({
+        type: POST_APPOINTMENT_DATA_STATE,
+        payload: false,
+      });
+    }
+  }, [response_message]);
 
   function otherPages() {
     switch (page) {
@@ -216,24 +330,20 @@ const DoctorInfoScreen = () => {
     }
 
     // Create date object from selected date and time
-    
-    
+
     // selectedTimeSlot is in the format: 9:00 AM
     // selectedDate is a dayjs
     var date = dayjs(
       selectedDate.format("DD/MM/YYYY") + " " + selectedTimeSlot.time,
       "DD/MM/YYYY hh:mm A"
     );
-    
 
     // Set seconds to 0
     date = date.set("second", 0).set("millisecond", 0);
 
     // If date is in the past, show error
-    
-    
+
     if (date.isBefore(dayjs())) {
-      
       // show error
       notification.error({
         message: "Error",
@@ -364,7 +474,7 @@ const DoctorInfoScreen = () => {
                 <CoolCalendar
                   selectedDate={selectedDate}
                   setSelectedDate={setSelectedDate}
-                  daysToHighlight={[]}
+                  daysToHighlight={daysToHighlight ?? []}
                 />
 
                 {/* Column containing all timeslots in a rounded rectangles */}
@@ -373,27 +483,10 @@ const DoctorInfoScreen = () => {
                   className={`h-[17rem] flex flex-col items-center justify-start gap-y-[0.35rem] px-4 mt-4`}
                   style={{ overflowY: "auto", overflowX: "hidden" }}
                 >
-                  {timeSlots.map((timeSlot: any, index: any) => {
+                  {timeSlots?.map((timeSlot: any, index: any) => {
                     // Check if doctor has an appointment at this time
 
-                    var hasAppointment = false;
-                    if (docinfo?.appointments) {
-                      docinfo.appointments.forEach((appointment: any) => {
-                        var appointmentDate = dayjs(appointment.date);
-                        var appointmentTime = appointmentDate.format("h:mm A");
-
-                        if (
-                          selectedDate?.format("DD/MM/YYYY") ===
-                            appointmentDate.format("DD/MM/YYYY") &&
-                          appointmentTime === timeSlot.time
-                        ) {
-                          hasAppointment = true;
-                          
-                          
-                        }
-                      });
-                    }
-
+                    var hasAppointment = !timeSlot.isAvailable;
                     return (
                       <Button
                         disabled={hasAppointment}
