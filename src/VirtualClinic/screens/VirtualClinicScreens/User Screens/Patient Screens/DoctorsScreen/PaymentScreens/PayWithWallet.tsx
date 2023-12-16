@@ -37,7 +37,7 @@ interface PayWithWallet {
   priceDiscounted: any;
   appointmentDate: Dayjs | null;
   // returns boolean
-  callBack: () => Promise<boolean>;
+  callBack: any;
 }
 
 const PayWithWallet: FC<PayWithWallet> = ({
@@ -52,6 +52,17 @@ const PayWithWallet: FC<PayWithWallet> = ({
   const { userData, accessToken } = useSelector(
     (state: RootState) => state.userReducer
   );
+
+  const { updateWalletPage } = useSelector(
+    (state: RootState) => state.createAppointmentReducer
+  );
+
+  useEffect(() => {
+    console.log("response_message", updateWalletPage);
+    if (updateWalletPage) {
+      setPage("confirmation");
+    }
+  }, [updateWalletPage]);
 
   return (
     <ConfigProvider
@@ -173,33 +184,25 @@ const PayWithWallet: FC<PayWithWallet> = ({
             icon={<RightArrowIcon fontSize={18} style={{ rotate: "-45deg" }} />}
             width={"8rem"}
             onClick={async () => {
-              await callBack();
+              const data = await callBack("wallet");
 
               // Deduct from wallet using API
 
-              const res = await fetch(
-                `${process.env.REACT_APP_BACKEND_CLINIC}patient/payWithWallet`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${accessToken}`,
-                  },
-                  body: JSON.stringify({
-                    amount: priceDiscounted,
-                  }),
-                }
-              );
-              const data = await res.json();
+              // const res = await fetch(
+              //   `${process.env.REACT_APP_BACKEND_CLINIC}patient/payWithWallet`,
+              //   {
+              //     method: "POST",
+              //     headers: {
+              //       "Content-Type": "application/json",
+              //       Authorization: `Bearer ${accessToken}`,
+              //     },
+              //     body: JSON.stringify({
+              //       amount: priceDiscounted,
+              //     }),
+              //   }
+              // );
+              // const data = await res.json();
               // get "user" from data
-
-              if (data.user)
-                dispatch({
-                  type: UPDATE_USER_DATA,
-                  payload: data.user,
-                });
-
-              setPage("confirmation");
             }}
             colorInverted
             disabled={userData.wallet < priceDiscounted}

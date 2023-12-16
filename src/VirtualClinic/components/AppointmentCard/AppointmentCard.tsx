@@ -19,6 +19,7 @@ interface AppointmentCardProps {
 }
 
 const AppointmentCard: FC<AppointmentCardProps> = ({ appointment }) => {
+  console.log("Appointment", appointment);
   return (
     <div id="appointmentCard" className={`${styles.appointmentCard}`}>
       {/* IMAGE, NAME, SPECIALTY */}
@@ -42,9 +43,11 @@ const AppointmentCard: FC<AppointmentCardProps> = ({ appointment }) => {
               {appointment.doctor?.name}
             </h1>
             <p className="text-sm">{appointment.doctor?.specialty}</p>
+            <p className="text-sm">{appointment.patient[0]?.name}</p>
           </div>
           <div className="w-full flex items-end justify-between">
             <p className="text-xs centuryGothic">{appointment.doctor?.email}</p>
+            <p className="text-xs centuryGothic">{appointment?.patientType}</p>
 
             {/* time text-2xl */}
             <p className="text-2xl font-semibold" style={{ lineHeight: "1" }}>
@@ -53,6 +56,17 @@ const AppointmentCard: FC<AppointmentCardProps> = ({ appointment }) => {
           </div>
         </div>
       </div>
+      <p
+        style={{
+          position: "absolute",
+          top: "0.8rem",
+          right: "2.5rem",
+          textAlign: "right",
+          textTransform: "capitalize",
+        }}
+      >
+        {appointment?.status}
+      </p>
       {/* Three dots at top right */}
       <div
         className={`${styles.threeDots}`}
