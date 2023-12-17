@@ -36,6 +36,7 @@ import FamilyMemberPackageScreen from "VirtualClinic/screens/VirtualClinicScreen
 import VideoCallScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/VideoCallScreen/VideoCallScreen";
 import DoctorPrescriptionsScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Doctor Screens/PrescriptionsScreen/PrescriptionsScreen";
 import DoctorPrescriptionDetailsScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Doctor Screens/PrescriptionsScreen/PrescriptionDetailsScreen";
+import NotificationsScreen from "VirtualClinic/screens/VirtualClinicScreens/CommonScreens/NotificationsScreen/NotificationsScreen";
 
 export const routes = [
   {
@@ -209,4 +210,10 @@ export const routes = [
     system: "/clinic",
     parent: <ProtectedRoutes />,
   },
+  {
+    path: Routes.NOTIFICATIONS_PATH,
+    element: <NotificationsScreen />,
+    system: "/clinic",
+    parent: <ProtectedRoutes />
+  }
 ];
