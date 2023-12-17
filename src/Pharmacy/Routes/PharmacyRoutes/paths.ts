@@ -18,3 +18,5 @@ export const PASSWORD_PATH = "/password";
 
 export const VIEW_CONTRACT_PATH = "/view-contract";
 export const FORGOT_PASSWORD_PATH = "/reset-password";
+
+export const CHAT_PATH = "/chats/:recepientId";

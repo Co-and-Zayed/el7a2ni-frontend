@@ -1,5 +1,5 @@
 import styles from "./ChatScreen.module.css";
-import { useNav } from "VirtualClinic/hooks/useNav";
+import { useNav } from "Pharmacy/hooks/useNav";
 import { useEffect, useRef, useState } from "react";
 import {
   navLinksDoctor,
@@ -36,86 +36,63 @@ const ChatScreen = () => {
   const [currentChat, setCurrentChat] = useState<any>(null);
 
   // get recepient user id from search params using useParams
-
+  const [myInbox, setMyInbox] = useState<any>();
   const [messages, setMessages] = useState<any>([]);
   const [newMessage, setNewMessage] = useState<any>("");
   const [messagesLoading, setMessagesLoading] = useState<boolean>(false);
   const chatContainerRef = useRef(null);
 
-  const { userData, accessToken, userType } = useSelector(
-    (state: RootState) => state.userReducer
-  );
+  // const { userData, accessToken } = useSelector(
+  //   (state: RootState) => state.userReducer
+  // );
+
+  const pharmacistId = "657e31a185571a5bd22afe2a"; // 657e31a185571a5bd22afe2a
   const { getTimeFromDate } = useFunctions();
   const { formatDate } = useTimeFormat();
   const { recepientId } = useParams<any>();
 
-  const { patientsLoading, allPatients } = useSelector(
-    (state: RootState) => state.listAllPatientsReducer
-  );
+  // const { patientsLoading, allPatients } = useSelector(
+  //   (state: RootState) => state.listAllPatientsReducer
+  // );
 
-  const pharmacistId = "657e31a185571a5bd22afe2a"; // 657e31a185571a5bd22afe2a
-  const [isSupport, setIsSupport] = useState<boolean>(false);
-  useEffect(() => {
-    if (window.location.pathname.includes(":recepientId")) {
-      window.location.pathname = `/clinic/chats/${pharmacistId}`;
+  const getMyInbox = async () => {
+    try {
+      console.log("CONVERSATIONS 1");
+      // Fetch updated messages for the current user and the other user
+      const { data: conversations, error } = await supabase
+        .from("conversations")
+        .select("*");
+      // .order("timestamp", { ascending: true });
+
+      console.log("CONVERSATIONS 2");
+      if (error) {
+        console.error("Error fetching updated messages:", error.message);
+      } else {
+        console.log("Updated messages fetched successfully:");
+        console.log(conversations);
+        // Update the messages state with the new data
+        setMyInbox(conversations || []);
+      }
+    } catch (error: any) {
+      console.log("CONVERSATIONS 3");
+      console.error("Error handling inserts:", error.message);
+    } finally {
+      setMessagesLoading(false);
     }
-    setIsSupport(
-      window.location.pathname.includes(":recepientId") ||
-        window.location.pathname.includes(pharmacistId)
-    );
-  }, [window.location.pathname]);
+  };
+
+  useEffect(() => {
+    getMyInbox();
+  }, []);
 
   useEffect(() => {
     console.log("recepient id: ", recepientId);
     updateMessages();
   }, [recepientId]);
 
-  useEffect(() => {
-    dispatch(listAllPatientsAction({ doctorUsername: userData?.username })); // sending the request, and update the states
-  }, []);
-
-  const addToConversations = async () => {
-    try {
-      // Insert the message into the "messages" table
-      // Check if a record with user1_id already exists
-      const { data: existingConversation, error: existingError } =
-        await supabase
-          .from("conversations")
-          .select("*")
-          .eq("user1_id", userData?._id);
-
-      if (existingError) {
-        // Handle error
-        console.error("Error checking existing conversation:", existingError);
-      } else if (!existingConversation || existingConversation.length === 0) {
-        // If no existing conversation found, proceed with the insertion
-        const { data, error } = await supabase.from("conversations").insert([
-          {
-            user1_id: userData?._id,
-            user1_name: userData?.name,
-            user1_type: userType,
-            user2_id: pharmacistId,
-          },
-        ]);
-
-        if (error) {
-          // Handle insertion error
-          console.error("Error inserting conversation:", error);
-        } else {
-          // Insertion successful
-          console.log("Conversation inserted successfully:", data);
-        }
-      } else {
-        // Conversation with user1_id already exists, handle accordingly
-        console.log(
-          "Conversation with user1_id already exists:",
-          existingConversation
-        );
-      }
-    } catch (error: any) {
-      console.error("Error sending message:", error.message);
-    }
-  };
+  // useEffect(() => {
+  //   dispatch(listAllPatientsAction({ doctorUsername: userData?.username })); // sending the request, and update the states
+  // }, []);
 
   // Create a function to handle inserts
   const handleInserts = (payload: any) => {
@@ -138,13 +115,12 @@ const ChatScreen = () => {
     setMessagesLoading(true);
     try {
       console.log("UPDATE MESSAGES 1");
-      console.log("USER DATA: ", userData);
       // Fetch updated messages for the current user and the other user
       const { data: updatedMessages, error } = await supabase
         .from("messages")
         .select("*")
-        .in("sender_id", [userData?._id, recepientId])
-        .in("receiver_id", [userData?._id, recepientId]);
+        .in("sender_id", [pharmacistId, recepientId])
+        .in("receiver_id", [pharmacistId, recepientId]);
       // .order("timestamp", { ascending: true });
 
       console.log("UPDATE MESSAGES 2");
@@ -202,7 +178,6 @@ const ChatScreen = () => {
         );
       } else {
         console.log("Message sent successfully:", data);
-        addToConversations();
       }
     } catch (error: any) {
       console.error("Error sending message:", error.message);
@@ -241,48 +216,17 @@ const ChatScreen = () => {
     );
   };
 
-  const getMyDoctors = async () => {
-    // const res = await api.post("patient/getMyDoctors", {
-    //   patientId: userData?._id,
-    // });
-
-    if (userData) {
-      // const res = await fetch(
-      //   `${process.env.REACT_APP_BACKEND_CLINIC}patient/getMyDoctors`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${accessToken}`,
-      //     },
-      //     body: JSON.stringify({
-      //       patientId: userData?._id,
-      //     }),
-      //   }
-      // );
-      // setMyDoctors(res);
-      console.log("MY DOCTORS");
-      // console.log(await res?.json());
-      // setMyDoctors(await res?.json());
-    } else {
-      console.log("WTF");
-      console.log(userData);
-    }
-  };
-
   return (
     <div className="w-full flex gap-4 items-center justify-center pt-12">
-      {!isSupport && (
-        <div className={`${styles.inboxContainer}`}>
-          {allPatients?.map((patient: any, idx: number) => {
-            return renderInboxItem({
-              id: patient?._id,
-              name: patient?.name,
-              username: patient?.username,
-            });
-          })}
-        </div>
-      )}
+      <div className={`${styles.inboxContainer}`}>
+        {myInbox?.map((inbox: any, idx: number) => {
+          return renderInboxItem({
+            id: inbox?.user1_id,
+            name: inbox?.user1_name,
+            username: inbox?.user1_type,
+          });
+        })}
+      </div>
       <div
         className={`${styles.chatContainer} chatContainer h-full flex flex-col items-center justify-end`}
       >
@@ -298,7 +242,7 @@ const ChatScreen = () => {
             ) : messages?.length > 0 ? (
               // @ts-ignore
               messages.map((msg: any, idx: any) => {
-                const isMe = msg.sender_id === userData?._id;
+                const isMe = msg.sender_id === pharmacistId;
 
                 // Check if the current message's date is different from the previous one
                 const showDate =
@@ -374,7 +318,7 @@ const ChatScreen = () => {
             className={`${styles.sendButton} flex items-center justify-center cursor-pointer`}
             onClick={async () => {
               await handleSendMessage({
-                sender_id: userData?._id,
+                sender_id: pharmacistId,
                 receiver_id: recepientId ?? "",
                 message_text: newMessage,
               });

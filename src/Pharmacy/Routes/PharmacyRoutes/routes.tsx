@@ -13,6 +13,7 @@ import NotFoundScreen from "Pharmacy/screens/NotFoundScreen/NotFoundScreen";
 import BuyMedicineScreen from "Pharmacy/screens/User Screens/Patient Screens/MedicineScreen/BuyMedicineScreen";
 import OrderScreen from "Pharmacy/screens/User Screens/Patient Screens/OrderScreen/OrderScreen";
 import ForgotPassword from "Pharmacy/screens/ForgotPasswordScreen/ForgotPassword";
+import CommonChatScreen from "components/CommonChatScreen/CommonChatScreen";
 
 const system = "/pharmacy";
 export const routes = [
@@ -101,5 +102,11 @@ export const routes = [
     path: Routes.FORGOT_PASSWORD_PATH,
     element: <ForgotPassword />,
     system: system,
+  },
+  {
+    path: Routes.CHAT_PATH,
+    system: system,
+    element: <CommonChatScreen />,
+    parent: <ProtectedRoutes />,
   },
 ];

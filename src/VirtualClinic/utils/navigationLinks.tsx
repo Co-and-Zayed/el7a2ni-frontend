@@ -10,6 +10,7 @@ import {
   ProfileIcon,
   MedicalIcon,
   VideoIcon,
+  ChatIcon,
 } from "VirtualClinic/assets/IconComponents";
 import PatientProfileScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/SettingsScreen/ProfileScreen/ProfileScreen";
 import PatientPasswordScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/SettingsScreen/PasswordScreen/PasswordScreen";
@@ -119,6 +120,11 @@ export const navLinksDoctor = [
     name: "Appointments",
     route: Routes.APPOINTMENTS_PATH,
     icon: <AppointmentsIcon />,
+  },
+  {
+    name: "Pharm Support",
+    route: Routes.CHAT_PATH,
+    icon: <ChatIcon />,
   },
 ];
 

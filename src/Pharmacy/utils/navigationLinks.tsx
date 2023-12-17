@@ -12,6 +12,7 @@ import {
 
 import PatientPasswordScreen from "Pharmacy/screens/User Screens/Patient Screens/SettingsScreen/PasswordScreen/PasswordScreen";
 import PatientProfileScreen from "Pharmacy/screens/User Screens/Patient Screens/SettingsScreen/ProfileScreen/ProfileScreen";
+import { ChatIcon } from "VirtualClinic/assets/IconComponents";
 
 export const navLinksPatient = [
   {
@@ -28,6 +29,11 @@ export const navLinksPatient = [
     name: "Order",
     route: Routes.ORDER_PATH,
     icon: <AppointmentsIcon />,
+  },
+  {
+    name: "Customer Support",
+    route: Routes.CHAT_PATH,
+    icon: <ChatIcon />,
   },
 ];
 
@@ -86,6 +92,11 @@ export const navLinksPharmacist = [
     name: "Medicine",
     route: Routes.MEDICINE_PATH,
     icon: <PrescriptionsIcon />,
+  },
+  {
+    name: "Customer Support",
+    route: Routes.CHAT_PATH,
+    icon: <ChatIcon />,
   },
 ];
 

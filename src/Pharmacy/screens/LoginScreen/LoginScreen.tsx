@@ -69,6 +69,7 @@ const LoginScreen = () => {
 
   useEffect(() => {
     document.body.style.backgroundColor = "var(--dark-green)";
+    dispatch({ type: "LOGIN_LOADING", payload: false });
   }, []);
 
   function pageContent() {
@@ -192,7 +193,10 @@ const LoginScreen = () => {
             ) : (
               <SubmitButton text="Login" className="w-full" />
             )}
-            <a className="text-white w-full text-center mb-2" href="/clinic/login">
+            <a
+              className="text-white w-full text-center mb-2"
+              href="/clinic/login"
+            >
               Switch to Virtual Clinic
             </a>
           </form>

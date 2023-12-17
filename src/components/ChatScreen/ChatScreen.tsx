@@ -39,18 +39,30 @@ const ChatScreen = () => {
   const [newMessage, setNewMessage] = useState<any>("");
   const [myDoctors, setMyDoctors] = useState<any[]>([]);
   const [messagesLoading, setMessagesLoading] = useState<boolean>(false);
-  const chatContainerRef = useRef(null);
 
-  const { userData, accessToken } = useSelector(
+  const { userData, accessToken, userType } = useSelector(
     (state: RootState) => state.userReducer
   );
   const { getTimeFromDate } = useFunctions();
   const { formatDate } = useTimeFormat();
   const { recepientId } = useParams<any>();
 
+  const [currSystem, setCurrSystem] = useState<string>("");
+  useEffect(() => {
+    setCurrSystem(
+      window.location.pathname.includes("/clinic") ? "clinic" : "pharmacy"
+    );
+  }, [window.location.pathname]);
+
+  const pharmacistId = "657e31a185571a5bd22afe2a";
+
   useEffect(() => {
     console.log("recepient id: ", recepientId);
-    updateMessages();
+    if (recepientId === ":recepientId") {
+      window.location.pathname = `/pharmacy/chats/${pharmacistId}`;
+    } else {
+      updateMessages();
+    }
   }, [recepientId]);
 
   useEffect(() => {
@@ -112,6 +124,49 @@ const ChatScreen = () => {
     }
   };
 
+  const addToConversations = async () => {
+    try {
+      // Insert the message into the "messages" table
+      // Check if a record with user1_id already exists
+      const { data: existingConversation, error: existingError } =
+        await supabase
+          .from("conversations")
+          .select("*")
+          .eq("user1_id", userData?._id);
+
+      if (existingError) {
+        // Handle error
+        console.error("Error checking existing conversation:", existingError);
+      } else if (!existingConversation || existingConversation.length === 0) {
+        // If no existing conversation found, proceed with the insertion
+        const { data, error } = await supabase.from("conversations").insert([
+          {
+            user1_id: userData?._id,
+            user1_name: userData?.name,
+            user1_type: userType,
+            user2_id: pharmacistId,
+          },
+        ]);
+
+        if (error) {
+          // Handle insertion error
+          console.error("Error inserting conversation:", error);
+        } else {
+          // Insertion successful
+          console.log("Conversation inserted successfully:", data);
+        }
+      } else {
+        // Conversation with user1_id already exists, handle accordingly
+        console.log(
+          "Conversation with user1_id already exists:",
+          existingConversation
+        );
+      }
+    } catch (error: any) {
+      console.error("Error sending message:", error.message);
+    }
+  };
+
   const handleSendMessage = async (input: {
     sender_id: string;
     receiver_id: string;
@@ -142,6 +197,7 @@ const ChatScreen = () => {
         );
       } else {
         console.log("Message sent successfully:", data);
+        addToConversations();
       }
     } catch (error: any) {
       console.error("Error sending message:", error.message);
@@ -211,15 +267,17 @@ const ChatScreen = () => {
 
   return (
     <div className="w-full flex gap-4 items-center justify-center pt-12">
-      <div className={`${styles.inboxContainer}`}>
-        {myDoctors?.map((doctor: any, idx: number) => {
-          return renderInboxItem({
-            id: doctor?._id,
-            name: doctor?.name,
-            specialty: doctor?.specialty,
-          });
-        })}
-      </div>
+      {currSystem === "clinic" && (
+        <div className={`${styles.inboxContainer}`}>
+          {myDoctors?.map((doctor: any, idx: number) => {
+            return renderInboxItem({
+              id: doctor?._id,
+              name: doctor?.name,
+              specialty: doctor?.specialty,
+            });
+          })}
+        </div>
+      )}
       <div
         className={`${styles.chatContainer} chatContainer h-full flex flex-col items-center justify-end`}
       >
