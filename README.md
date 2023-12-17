@@ -468,15 +468,12 @@ We use Postman for testing the "El7a2ny" APIs. Follow the steps below to run the
    - Click on the "Import" button in the top left corner.
    - Upload the Postman collection file provided in the repository (if available).
 
-2. Set up environment variables (if required):
-   - Some requests may depend on environment variables. Make sure to set them up appropriately.
-
-3. Run the tests:
+2. Run the tests:
    - Navigate to the "Collections" tab in Postman.
    - Select the "El7a2ny API Tests" collection.
    - Click on the "Run" button.
 
-4. Review the test results:
+3. Review the test results:
    - Postman will display the results of each request in the collection, indicating whether they passed or failed.
 
 ### Example: Testing `getMedicinalUses`
