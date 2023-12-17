@@ -196,8 +196,8 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
             }}
             optionFilterProp="children"
             options={getAvailableMedicines?.map((medicine: any) => ({
-              value: medicine._id,
-              label: medicine.name,
+              value: medicine?._id,
+              label: medicine?.name,
             }))} // Map directly from getAvailableMedicines
             filterOption={(input, option: any) =>
               option?.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
