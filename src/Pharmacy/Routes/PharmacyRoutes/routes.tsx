@@ -14,6 +14,7 @@ import BuyMedicineScreen from "Pharmacy/screens/User Screens/Patient Screens/Med
 import OrderScreen from "Pharmacy/screens/User Screens/Patient Screens/OrderScreen/OrderScreen";
 import ForgotPassword from "Pharmacy/screens/ForgotPasswordScreen/ForgotPassword";
 import ViewSalesReportScreen from "Pharmacy/screens/User Screens/Pharmacist Screens/SalesReportScreen/ViewSalesReportScreen";
+import NotificationsScreen from "Pharmacy/screens/NotificationsScreen/NotificationScreen";
 
 const system = "/pharmacy";
 export const routes = [
@@ -109,4 +110,10 @@ export const routes = [
     element: <ViewSalesReportScreen/>,
     system: system,
   },
+  {
+    path: Routes.NOTIFICATIONS_PATH,
+    parent: <ProtectedRoutes />,
+    element: <NotificationsScreen />,
+    system: system
+  }
 ];

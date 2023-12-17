@@ -21,3 +21,5 @@ export const FORGOT_PASSWORD_PATH = "/reset-password";
 
 export const VIEW_SALES_REPORT_PATH = "/view-sales-report";
 
+export const NOTIFICATIONS_PATH = "/notifications";
+
