@@ -13,6 +13,9 @@ import RoundedButton from "VirtualClinic/components/RoundedButton/RoundedButton"
 import { transform } from "typescript";
 
 const SettingsScreen = () => {
+  const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(null);
+  const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(null);
+
   const dispatch: any = useDispatch();
 
   const { userData, accessToken } = useSelector(
@@ -64,10 +67,18 @@ const SettingsScreen = () => {
     (state: RootState) => state.editSettingsReducer
   );
 
-  async function chooseSlots(values: any) {
-    var date = new Date();
-    // create Slots
-    // // Params: doctorId, date, startTime, endTime
+  async function chooseSlots() {
+    // dateTime with selected date and start time
+    var startDateJs = dayjs(
+      `${selectedDate?.format("YYYY-MM-DD")} ${startTime?.format("HH:mm")}`
+    );
+    const startDateTime = startDateJs.toDate();
+
+    // dateTime with selected date and end time
+    var endDateJs = dayjs(
+      `${selectedDate?.format("YYYY-MM-DD")} ${endTime?.format("HH:mm")}`
+    );
+    const endDateTime = endDateJs.toDate();
 
     const res = await fetch(
       `${process.env.REACT_APP_BACKEND_CLINIC}doctor/chooseSlots`,
@@ -80,12 +91,29 @@ const SettingsScreen = () => {
         body: JSON.stringify({
           //to be changed
           doctorId: userData?._id,
-          startTime: values[0],
-          endTime: values[1],
-          date: selectedDate?.toISOString(),
+          startTime: startDateTime,
+          endTime: endDateTime,
+          date: selectedDate,
         }),
       }
     );
+
+    const data = await res.json();
+
+    console.log("Choose slots res", res);
+    console.log("Choose slots", data);
+
+    if (res.status !== 200) {
+      notification.error({
+        message: "Error",
+        description: data,
+      });
+    } else {
+      notification.success({
+        message: "Success",
+        description: data,
+      });
+    }
   }
 
   const [daysToHighlight, setDaysToHighlight] = useState<Dayjs[] | null>(null);
@@ -149,7 +177,6 @@ const SettingsScreen = () => {
     }
 
     // If date is in the past, show error
-
     if (!isFutureDate(selectedDate.toDate())) {
       // show error
       notification.error({
@@ -185,11 +212,36 @@ const SettingsScreen = () => {
           <TimePicker.RangePicker
             use12Hours
             format="h:00 a"
+            value={[startTime, endTime]}
             onClick={handleCalnderClick}
+            onChange={(value) => {
+              if (value) {
+                const [start, end] = value;
+                const [startString, endString] = value.map((date) =>
+                  date?.format("h:mm a")
+                );
+
+                // If start time is after end time, show error
+                if (start?.isAfter(end)) {
+                  // show error
+                  notification.error({
+                    message: "Error",
+                    description: "Start time cannot be after end time",
+                  });
+                  return;
+                }
+
+                setStartTime(start);
+                setEndTime(end);
+              } else {
+                setStartTime(null);
+                setEndTime(null);
+              }
+            }}
           />
           <br></br>
           <br></br>
-          <RoundedButton text="Submit" />
+          <RoundedButton text="Submit" onClick={chooseSlots} />
         </div>
         <br></br>
       </div>
@@ -218,8 +270,8 @@ const SettingsScreen = () => {
               <h1>{key}</h1>
               <p>
                 {key !== "slots"
-                  ? doctorSettings[key]
-                  : doctorSettings[key][0].time}
+                  ? doctorSettings[key].toString()
+                  : doctorSettings[key][0].time.toString()}
               </p>
               {["affiliation", "hourlyRate", "email"].includes(key) && (
                 <>

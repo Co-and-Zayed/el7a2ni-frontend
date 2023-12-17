@@ -154,15 +154,15 @@ const DoctorInfoScreen = () => {
   function generateDoctorSlots() {
     const newTimeSlots = docinfo?.slots
       ?.filter((slot: any) => {
-        const slotDate = new Date(slot?.date);
+        // slot.time is in the form "9:00 PM"
+        const slotDateTime = dayjs(
+          slot?.date + " " + slot?.time,
+          "YYYY-MM-DD hh:mm A"
+        );
         return (
-          slot?.date.split("T")[0] ===
-            selectedDate?.toISOString().split("T")[0] &&
-          (isFutureDate(slotDate) ||
-            (selectedDate?.format("DD/MM/YYYY") === dayjs().format("DD/MM/YYYY")
-              ? // if today, check if time is in the future
-                isFutureTime(slot?.time)
-              : false))
+          // Check if slot is in the future
+          selectedDate?.isSame(slotDateTime, "day") &&
+          slotDateTime.isAfter(dayjs())
         );
       })
       .map((slot: any) => {

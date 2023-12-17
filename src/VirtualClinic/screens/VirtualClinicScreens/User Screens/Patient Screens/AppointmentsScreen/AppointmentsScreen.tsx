@@ -64,114 +64,83 @@ const AppointmentsScreen = () => {
   const [pastAppointments, setPastAppointments] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
-  // const handleFamilyMemberRequest = async () => {    
-  //   const res: any = await fetch(
-  //     `${process.env.REACT_APP_BACKEND_CLINIC}patient/getFamilyMemberAppointments`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     }
-  //     );
-  //   const FamilyMembersAppointments = await res.json();
-  // };
+  const [familyMembersAppointments, setFamilyMembersAppointments] = useState<
+    any[]
+  >([]);
+  const [allUserAppointments, setAllUserAppointments] = useState<any[]>([]);
 
-  // const data: DataType[] = userAppointments?.map((appointment: any) => {
-  //   const date = moment(appointment.date);
-  //   return {
-  //     patientName: appointment.patient.name,
-  //     doctorName: appointment.doctor.name,
-  //     date: date.toDate(),
-  //     dateStr: date.format("dddd, D MMMM, yyyy"),
-  //     time: date.format("h:mm a"),
-  //     status: appointment.status,
-  //     key: appointment._id,
-  //   };
-  // });
-  const data: DataType[] = userAppointments?.map((appointment: any) => {
-    const date = moment(appointment.date);
-    return {
-      patientName: appointment.patient.name,
-      doctorName: appointment.doctor.name,
-      date: date.toDate(),
-      dateStr: date.format("dddd, D MMMM, yyyy"),
-      time: date.format("h:mm a"),
-      status: appointment.status,
-      key: appointment._id,
-    };
-  });
-  
-// Assume data is the existing array of appointments
+  // Fetch family members' appointments
+  const handleFamilyMemberRequest = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_CLINIC}patient/getFamilyMemberAppointments`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-// Fetch family members' appointments
-const handleFamilyMemberRequest = async () => {
-  try {
-    const res = await fetch(
-      `${process.env.REACT_APP_BACKEND_CLINIC}patient/getFamilyMemberAppointments`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
+      if (!res.ok) {
+        throw new Error("Failed to fetch family members' appointments");
       }
-    );
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch family members' appointments");
+      const familyMembersAppointments = await res.json();
+
+      setFamilyMembersAppointments(familyMembersAppointments);
+
+      updateDaysToHighlight();
+      // Update the state or do something with the mappedAppointments
+    } catch (error) {
+      console.error("Error fetching family members' appointments:", error);
     }
-
-    const familyMembersAppointments = await res.json();
-
-    // Map family members' appointments to the DataType structure
-    const familyMembersData: DataType[] = familyMembersAppointments?.map(
-      (appointment: any) => {
-        const date = moment(appointment.date);
-        return {
-          patientName: appointment.patient.name,
-          doctorName: appointment.doctor.name,
-          date: date.toDate(),
-          dateStr: date.format("dddd, D MMMM, yyyy"),
-          time: date.format("h:mm a"),
-          status: appointment.status,
-          key: appointment._id,
-        };
-      }
-    );
-
-    // Concatenate the two arrays
-    const mergedData: DataType[] = [...data, ...familyMembersData];
-
-    // Dispatch user Appointments with merged Data
-
-    dispatch({
-      type: "GET_APPOINTMENTS_DATA_SUCCESS",
-      payload: mergedData,
-    });
-
-    // Update the state or do something with the mappedAppointments
-  } catch (error) {
-    console.error("Error fetching family members' appointments:", error);
-  }
-};
-
-  
+  };
 
   useEffect(() => {
     fetchAppointments();
-    handleFamilyMemberRequest();
+    // handleFamilyMemberRequest();
   }, []);
 
+  //userAppointments useEffect
+  useEffect(() => {
+    console.log("userAppointments", userAppointments);
+    if (userAppointments && familyMembersAppointments)
+      setAllUserAppointments([
+        ...userAppointments,
+        ...familyMembersAppointments,
+      ]);
+  }, [userAppointments]);
+
+  // familyMembersAppointments useEffect
+  useEffect(() => {
+    console.log("familyMembersAppointments", familyMembersAppointments);
+    if (familyMembersAppointments && userAppointments)
+      setAllUserAppointments([
+        ...userAppointments,
+        ...familyMembersAppointments,
+      ]);
+  }, [familyMembersAppointments]);
+
+  useEffect(() => {
+    console.log("allUserAppointments", allUserAppointments);
+
+    // Sort them and set them in state
+    const sortedAppointments = allUserAppointments.sort((a, b) =>
+      dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1
+    );
+    setAllUserAppointments(sortedAppointments);
+  }, [allUserAppointments]);
+
   async function fetchAppointments() {
+    handleFamilyMemberRequest();
     await dispatch(
       getAppointmentsAction({
         id: userData?._id,
         type: userType,
       })
     );
-    handleFamilyMemberRequest();
 
     updateDaysToHighlight();
   }
@@ -357,25 +326,29 @@ const handleFamilyMemberRequest = async () => {
   const [daysToHighlight, setDaysToHighlight] = useState<Dayjs[] | null>(null);
 
   useEffect(() => {
+    console.log("Updating days to highlight");
     updateDaysToHighlight();
-  }, [userAppointments]);
+  }, [allUserAppointments]);
 
   function updateDaysToHighlight() {
-    if (userAppointments) {
+    if (allUserAppointments) {
       var uniqueDays: dayjs.Dayjs[] = [];
-      userAppointments.forEach((app: any) => {
+      allUserAppointments.forEach((app: any) => {
         const date = dayjs(app.date);
         if (!uniqueDays.includes(date)) {
           uniqueDays.push(date);
         }
       });
-      setDaysToHighlight(uniqueDays);
+      setDaysToHighlight((prev) => {
+        return uniqueDays;
+      });
     }
   }
   function getFilteredAppointments() {
     var filteredAppointments;
     if (selectedDate) {
-      filteredAppointments = userAppointments?.filter((app: any) => {
+      // filteredAppointments = userAppointments?.filter((app: any) => {
+      filteredAppointments = allUserAppointments?.filter((app: any) => {
         const date = dayjs(app.date);
         return date.isSame(selectedDate, "day");
       });
@@ -457,7 +430,11 @@ const handleFamilyMemberRequest = async () => {
             delay: idx * 0.1,
           }}
         >
-          <AppointmentCard appointment={app} />
+          <AppointmentCard
+            appointment={app}
+            isForMe={app.patient?._id === userData?._id}
+            refresh={fetchAppointments}
+          />
         </motion.div>
       );
       idx++;
@@ -535,13 +512,13 @@ const handleFamilyMemberRequest = async () => {
               >
                 Upcoming
               </Button>
-              <Button
+              {/* <Button
                 onClick={() => {
-                  handleFamilyMemberRequest();
+                  // handleFamilyMemberRequest();
                 }}
               >
                 Family Members
-              </Button>
+              </Button> */}
             </div>
 
             {/* FILTER BY STATUS (upcoming, completed, cancelled, rescheduled) */}
