@@ -8,7 +8,7 @@ import { notification } from "antd";
 
 interface CheckoutFormProps {
   setPage: any;
-  callBack: () => Promise<boolean>;
+  callBack: any;
 }
 
 export default function CheckoutForm({ setPage, callBack }: CheckoutFormProps) {
@@ -48,7 +48,7 @@ export default function CheckoutForm({ setPage, callBack }: CheckoutFormProps) {
         description: "Payment successful! 🎉",
       });
 
-      await callBack();
+      await callBack("card");
       setPage("confirmation");
     } else {
       setMessage("An unexpected error occured.");

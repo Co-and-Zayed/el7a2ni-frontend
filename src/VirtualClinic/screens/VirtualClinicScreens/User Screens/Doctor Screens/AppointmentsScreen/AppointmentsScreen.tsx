@@ -56,7 +56,11 @@ const AppointmentsScreen = () => {
     (state: RootState) => state.getAppointmentsReducer
   );
 
-  const { userData, userType } = useSelector(
+  const { statusCode, response_message } = useSelector(
+    (state: RootState) => state.createAppointmentReducer
+  );
+
+  const { userData, userType, accessToken } = useSelector(
     (state: RootState) => state.userReducer
   );
 
@@ -136,8 +140,10 @@ const AppointmentsScreen = () => {
       case "UPCOMING":
         return "processing";
       case "CANCELLED":
+      case "REJECTED":
         return "error";
       case "RESCHEDULED":
+      case "PENDING":
         return "warning";
       default:
         return "warning";
@@ -279,6 +285,8 @@ const AppointmentsScreen = () => {
         { text: "Cancelled", value: "CANCELLED" },
         { text: "Completed", value: "COMPLETED" },
         { text: "Rescheduled", value: "RESCHEDULED" },
+        { text: "Pending", value: "PENDING" },
+        { text: "Rejected", value: "REJECTED" },
       ],
       onFilter: (value: React.Key | boolean, record) =>
         record.status.indexOf(value as string) === 0,
@@ -297,7 +305,7 @@ const AppointmentsScreen = () => {
       title: "Action",
       key: "operation",
       fixed: "right",
-      width: 150,
+      width: 170,
       render: (record) => {
         var items = [
           { key: "UPCOMING", label: "Mark as Upcoming" },
@@ -312,7 +320,27 @@ const AppointmentsScreen = () => {
           items.push({ key: "FOLLOW_UP", label: "Schedule a Follow Up" });
         }
 
-        return (
+        return record.status === "PENDING" ? (
+          // accept and reject
+          <div className="flex items-center justify-center gap-x-2">
+            <Button
+              type="primary"
+              onClick={() => onClick({ key: "ACCEPTED" }, record.key)}
+            >
+              Accept
+            </Button>
+            <Popconfirm
+              title="Are you sure you want to reject this appointment?"
+              onConfirm={() => onClick({ key: "REJECTED" }, record.key)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="primary" danger>
+                Reject
+              </Button>
+            </Popconfirm>
+          </div>
+        ) : (
           <Dropdown
             menu={{ items, onClick: (item) => onClick(item, record.key) }}
           >
@@ -337,6 +365,65 @@ const AppointmentsScreen = () => {
     if (item.key === "FOLLOW_UP") {
       setSelectedAppointment(id);
       setFollowUpModalVisible(true);
+      return;
+    }
+
+    // If it is cancel, call api to cancel appointment
+    if (item.key === "CANCELLED") {
+      // use fetch api to cancel appointment
+      var res = await fetch(
+        `${process.env.REACT_APP_BACKEND_CLINIC}doctor/cancelAppointment`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            _id: id,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+    }
+
+    console.log("ITEM KEY: ", item.key);
+
+    // if pending, accept or reject
+    if (item.key === "ACCEPTED" || item.key === "REJECTED") {
+      console.log("ACCEPTED OR REJECTED");
+      // use fetch api to accept appointment
+      var res = await fetch(
+        `${process.env.REACT_APP_BACKEND_CLINIC}doctor/handleFollowUpAppointment`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            appointmentId: id,
+            approval: item.key,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      // Check status code
+      if (res.status !== 200) {
+        notification.error({
+          message: "Error Accepting or Rejecting Appointment",
+          description: `There was an error accepting the appointment ${response_message}`,
+          onClick: () => {},
+          // placement: "bottomRight",
+        });
+      } else {
+        dispatch(
+          getAppointmentsAction({
+            id: userData?._id,
+            type: userType,
+          })
+        );
+      }
+
       return;
     }
 
@@ -395,7 +482,7 @@ const AppointmentsScreen = () => {
 
           var finalDate = chosenDate?.toDate();
           finalDate.setHours(chosenTime?.hour() || 0);
-          finalDate?.setMinutes(chosenTime?.minute() || 0);
+          finalDate?.setMinutes(0);
           finalDate?.setSeconds(0);
           finalDate?.setMilliseconds(0);
 
@@ -412,6 +499,18 @@ const AppointmentsScreen = () => {
               patientType: appointment?.patientType,
             })
           );
+
+          // Check status code
+          if (statusCode !== 200) {
+            notification.error({
+              message: "Error Rescheduling Appointment",
+              description: `There was an error rescheduling the appointment ${response_message}`,
+              onClick: () => {},
+              // placement: "bottomRight",
+            });
+            setLoadingReschedule(false);
+            return;
+          }
 
           // update the old appointment to be rescheduled
           await dispatch(
@@ -447,7 +546,7 @@ const AppointmentsScreen = () => {
       >
         {/* DATE AND TIME PICKER */}
         <p>Choose a date and time for your appointment</p>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex items-center justify-between gap-x-2">
           <Input
             type="date"
             allowClear
@@ -457,9 +556,10 @@ const AppointmentsScreen = () => {
           />
           {/* only every 30 minutes */}
           <TimePicker
-            minuteStep={30}
+            // minuteStep={30}
+            showMinute={false}
             showSecond={false}
-            format={"h:mm a"}
+            format={"h a"}
             showNow={false}
             allowClear
             onChange={(time, timeString) => {
@@ -492,7 +592,7 @@ const AppointmentsScreen = () => {
 
           var finalDate = chosenDate?.toDate();
           finalDate.setHours(chosenTime?.hour() || 0);
-          finalDate?.setMinutes(chosenTime?.minute() || 0);
+          finalDate?.setMinutes(0);
           finalDate?.setSeconds(0);
           finalDate?.setMilliseconds(0);
 
@@ -542,7 +642,7 @@ const AppointmentsScreen = () => {
           setFollowUpModalVisible(false);
         }}
         confirmLoading={loadingReschedule}
-        onCancel={() => setRescheduleModalVisible(false)}
+        onCancel={() => setFollowUpModalVisible(false)}
       >
         {/* DATE AND TIME PICKER */}
         <p>Choose a date and time for your appointment</p>
