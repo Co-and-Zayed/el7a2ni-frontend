@@ -92,7 +92,7 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
 
     try {
       const medicineData: Medicine = {
-        medicineID: selectedMedicineId, // Set medicineID
+        medicineID: selectedMedicineId,
         name,
         duration,
         dosage,
@@ -129,6 +129,8 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
             medicines: medicines,
           })
         );
+        handleAddNewMedicine();
+
         setVisible(false);
         window.location.reload();
       }}
@@ -179,7 +181,7 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
           />
         </div>
         {/* DROPDOWN FOR medicine */}
-        <div className={`flex text-base gap-x-2 items-center`}>
+        {/* <div className={`flex text-base gap-x-2 items-center`}>
           <label htmlFor="medicine" className={`text-lg`}>
             Choose Medicine
           </label>
@@ -197,8 +199,9 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
             optionFilterProp="children"
             options={getAvailableMedicines?.map((medicine: any) => ({
               value: medicine?._id,
-              label: medicine?.name,
-            }))} // Map directly from getAvailableMedicines
+              label: medicine.name,
+            }))}
+            // Map directly from getAvailableMedicines
             filterOption={(input, option: any) =>
               option?.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
@@ -212,9 +215,9 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
               fontWeight: "normal",
             }}
           />
-        </div>
+        </div> */}
         {/* Duration */}
-        <div className={`flex flex-col gap-y-1`}>
+        {/* <div className={`flex flex-col gap-y-1`}>
           <label htmlFor="description" className={`text-lg`}>
             Duration
           </label>
@@ -226,9 +229,9 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
               setDuration(e.target.value);
             }}
           />
-        </div>
+        </div> */}
         {/* Dosage */}
-        <div className={`flex flex-col gap-y-1`}>
+        {/* <div className={`flex flex-col gap-y-1`}>
           <label htmlFor="price" className={`text-lg`}>
             Dosage
           </label>
@@ -240,9 +243,9 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
               setDosage(e.target.value);
             }}
           />
-        </div>
+        </div> */}
         {/* Available Quantity */}
-        <div className={`flex flex-col gap-y-1`}>
+        {/* <div className={`flex flex-col gap-y-1`}>
           <label htmlFor="availableQuantity" className={`text-lg`}>
             Quantity
           </label>
@@ -258,121 +261,7 @@ const AddNewPrescriptionModal: FC<AddNewPrescriptionModalProps> = ({
               }
             }}
           />
-        </div>
-        {/* Render input fields for each medicine in the array */}
-        {medicines.map((medicine, index) => (
-          <div key={index} className={`flex flex-col gap-y-4`}>
-            {/* DROPDOWN FOR medicine */}
-            <div className={`flex text-base gap-x-2 items-center`}>
-              <label htmlFor="medicine" className={`text-lg`}>
-                Choose Medicine
-              </label>
-              <Select
-                placeholder="Select a Medicine"
-                showSearch
-                allowClear
-                onClear={() => {
-                  const newSelectedMedicineIdArray = [
-                    ...selectedMedicineIdArray,
-                  ];
-                  newSelectedMedicineIdArray[index] = null!;
-                  setSelectedMedicineIdArray(newSelectedMedicineIdArray);
-                }}
-                value={selectedMedicineIdArray[index]}
-                onSelect={(value) => {
-                  const newSelectedMedicineIdArray = [
-                    ...selectedMedicineIdArray,
-                  ];
-                  newSelectedMedicineIdArray[index] = value;
-                  setSelectedMedicineIdArray(newSelectedMedicineIdArray);
-                }}
-                optionFilterProp="children"
-                options={getAvailableMedicines?.map((medicine: any) => ({
-                  value: medicine._id,
-                  label: medicine.name,
-                }))} // Map directly from getAvailableMedicines
-                filterOption={(input, option: any) =>
-                  option?.children
-                    ?.toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-                className={`${inputStyles.lightInputField}`}
-                style={{
-                  paddingInline: "0",
-                  width: "12rem",
-                }}
-                dropdownStyle={{
-                  fontFamily: "Century Gothic",
-                  fontWeight: "normal",
-                }}
-              />
-            </div>
-            {/* Duration */}
-            <div className={`flex flex-col gap-y-1`}>
-              <label htmlFor="description" className={`text-lg`}>
-                Duration
-              </label>
-              <Input
-                id="description"
-                placeholder="Duration"
-                value={medicine.duration}
-                onChange={(e) => {
-                  const newMedicines = [...medicines];
-                  newMedicines[index].duration = e.target.value;
-                  setMedicines(newMedicines);
-                }}
-              />
-            </div>
-            {/* Dosage */}
-            <div className={`flex flex-col gap-y-1`}>
-              <label htmlFor="price" className={`text-lg`}>
-                Dosage
-              </label>
-              <Input
-                id="price"
-                placeholder="Dosage"
-                value={medicine.dosage}
-                onChange={(e) => {
-                  const newMedicines = [...medicines];
-                  newMedicines[index].dosage = e.target.value;
-                  setMedicines(newMedicines);
-                }}
-              />
-            </div>
-
-            {/* Available Quantity */}
-            <div className={`flex flex-col gap-y-1`}>
-              <label htmlFor="availableQuantity" className={`text-lg`}>
-                Quantity
-              </label>
-              <Input
-                id="availableQuantity"
-                type="number"
-                placeholder="Quantity"
-                value={medicine.quantity}
-                onChange={(e) => {
-                  const newMedicines = [...medicines];
-                  newMedicines[index].quantity = e.target.value;
-                  setMedicines(newMedicines);
-                }}
-              />
-            </div>
-          </div>
-        ))}
-        <Button type="primary" onClick={handleAddNewMedicine}>
-          Add Another Medicine
-        </Button>
-        {/* Status
-              <div className={`flex flex-col gap-y-1`}>
-                <label htmlFor="status" className={`text-lg`}>
-                  Status
-                </label>
-                <Input
-                  id="status"
-                  placeholder="Status"
-                  defaultValue={medicine?.status}
-                />  
-              </div> */}
+        </div> */}
       </div>
     </Modal>
   );
