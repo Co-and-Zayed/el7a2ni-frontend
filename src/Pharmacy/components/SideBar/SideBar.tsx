@@ -47,6 +47,7 @@ const SideBar: FC<SideBarProps> = () => {
   }) => {
     return (
       <div
+        key={link.index}
         className={`${styles.linkContainer} ${
           currentLink === link.index ? styles.activeLink : styles.nonActiveLink
         } flex items-center`}
@@ -98,7 +99,10 @@ const SideBar: FC<SideBarProps> = () => {
     navigate("/login");
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log("CURRENT NAV LINKS");
+    console.log(currentNavLinks);
+  }, [currentNavLinks]);
 
   useEffect(() => {
     setCurrentLink(-1);
@@ -154,7 +158,6 @@ const SideBar: FC<SideBarProps> = () => {
               generateLink({ ...link, index })
             )}
           </div>
-
           <div>
             {generateLink({
               name: "Settings",

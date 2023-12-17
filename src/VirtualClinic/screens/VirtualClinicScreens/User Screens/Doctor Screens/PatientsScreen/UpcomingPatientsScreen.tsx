@@ -204,7 +204,7 @@ const UpcomingPatientsScreen = () => {
           expandedRowRender: (record) => generateExpandable(record),
           onExpand: (expanded, record) => handleExpand(expanded, record),
         }}
-        dataSource={allPatients.map((patient: any) => {
+        dataSource={allPatients?.map((patient: any) => {
           //  unique key
           patient.key = patient.id;
           return patient;

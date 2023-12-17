@@ -9,6 +9,7 @@ import {
   EducationIcon,
   HospitalIcon,
   RightArrowIcon,
+  ChatIcon,
 } from "VirtualClinic/assets/IconComponents";
 import { SET_DOCTOR_CARD_COORDS } from "VirtualClinic/redux/VirtualClinicRedux/types";
 import { useNav } from "VirtualClinic/hooks/useNav";
@@ -16,6 +17,7 @@ import { useNav } from "VirtualClinic/hooks/useNav";
 interface DoctorCardProps {
   doctor: any;
   noBooking?: boolean;
+  sendMessage?: boolean;
   discountedPrice?: number | null;
 }
 
@@ -23,6 +25,7 @@ const DoctorCard: FC<DoctorCardProps> = ({
   doctor,
   noBooking,
   discountedPrice,
+  sendMessage,
 }) => {
   const dispatch: any = useDispatch();
   const navigate = useNav();
@@ -103,55 +106,90 @@ const DoctorCard: FC<DoctorCardProps> = ({
       </div>
 
       {/* SESSION PRICE */}
-      <div className={`${styles.cardItem} ${styles.priceCol}`}>
-        {/* PRICE */}
-        <div className="flex flex-col items-center justify-center gap-y-[0.1rem] lineH mt-2">
-          {/* DISCOUNTED */}
-          <p
-            className={`${styles.priceLight} ${styles.lineThrough}`}
+      {!sendMessage ? (
+        <div className={`${styles.cardItem} ${styles.priceCol}`}>
+          {/* PRICE */}
+          <div className="flex flex-col items-center justify-center gap-y-[0.1rem] lineH mt-2">
+            {/* DISCOUNTED */}
+            <p
+              className={`${styles.priceLight} ${styles.lineThrough}`}
+              style={{
+                visibility:
+                  doctor?.hourlyRate * 1.1 > sessionPrice
+                    ? "visible"
+                    : "hidden",
+              }}
+            >
+              {(doctor?.hourlyRate * 1.1)
+                ?.toLocaleString
+                // undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}
+                ()}{" "}
+              EGP
+            </p>
+            {/* ACTUAL */}
+            <p className={`${styles.price}`}>
+              {sessionPrice?.toLocaleString()} EGP
+            </p>
+            <p className={`${styles.priceLight}`}>per session</p>
+          </div>
+
+          {/* BOOK A SESSION LINK */}
+          {!noBooking && (
+            <a
+              onClick={(event) => {
+                getDoctorName(event, doctor?.username);
+              }}
+              className={`${styles.bookSession}`}
+            >
+              <p>Book a session</p>
+              <div className={`${styles.textGap}`}></div>
+              <RightArrowIcon height="10px" />
+            </a>
+          )}
+
+          <DollarIcon
+            className={`${styles.bgImage}`}
+            width=""
+            height=""
             style={{
-              visibility:
-                doctor?.hourlyRate * 1.1 > sessionPrice ? "visible" : "hidden",
+              height: "90%",
+              left: "-0.7rem",
+              bottom: "-1.5rem",
             }}
-          >
-            {(doctor?.hourlyRate * 1.1)
-              ?.toLocaleString
-              // undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}
-              ()}{" "}
-            EGP
-          </p>
-          {/* ACTUAL */}
-          <p className={`${styles.price}`}>
-            {sessionPrice?.toLocaleString()} EGP
-          </p>
-          <p className={`${styles.priceLight}`}>per session</p>
+          />
         </div>
+      ) : (
+        <div className={`${styles.cardItem} ${styles.priceCol}`}>
+          {/* BOOK A SESSION LINK */}
+          {!noBooking && (
+            <a
+              onClick={() => {
+                // navigate("/chat/" + doctor?.username);
+                navigate(`/chats/${doctor?._id}`);
+              }}
+              // onClick={(event) => {
+              //   getDoctorName(event, doctor?.username);
+              // }}
+              className={`${styles.bookSession}`}
+            >
+              <p>Send a message</p>
+              <div className={`${styles.textGap}`}></div>
+              <RightArrowIcon height="10px" />
+            </a>
+          )}
 
-        {/* BOOK A SESSION LINK */}
-        {!noBooking && (
-          <a
-            onClick={(event) => {
-              getDoctorName(event, doctor?.username);
+          <ChatIcon
+            className={`${styles.bgImage}`}
+            width=""
+            height=""
+            style={{
+              height: "90%",
+              left: "-0.7rem",
+              bottom: "-1.5rem",
             }}
-            className={`${styles.bookSession}`}
-          >
-            <p>Book a session</p>
-            <div className={`${styles.textGap}`}></div>
-            <RightArrowIcon height="10px" />
-          </a>
-        )}
-
-        <DollarIcon
-          className={`${styles.bgImage}`}
-          width=""
-          height=""
-          style={{
-            height: "90%",
-            left: "-0.7rem",
-            bottom: "-1.5rem",
-          }}
-        />
-      </div>
+          />
+        </div>
+      )}
     </div>
   );
 };

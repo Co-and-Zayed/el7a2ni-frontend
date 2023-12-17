@@ -6,7 +6,6 @@ import { RootState } from "VirtualClinic/redux/rootReducer";
 import JSZip from "jszip";
 import { access } from "fs";
 import { useFunctions } from "hooks/useFunctions";
-import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import {
   CURRENT_CALL_ACTION,
@@ -14,6 +13,7 @@ import {
   REMOTE_STREAM,
   RTC_CONNECTION,
 } from "VirtualClinic/redux/VirtualClinicRedux/types";
+import { initializeApp } from "firebase/app";
 import * as Firestore from "firebase/firestore";
 import { set } from "mongoose";
 import firebaseConfig from "firebaseConfig";

@@ -7,3 +7,49 @@
   padding-top: 2px;
   padding-bottom: 2px;
 }
+
+.customButton {
+  /* background-color: var(--light-green);
+  color: var(--dark-green); */
+
+  background-color: var(--dark-green);
+  color: white;
+
+  width: fit-content;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  /* font-size: 1.2rem; */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.termsText {
+  /* background-color: pink; */
+  width: 60%;
+  padding-bottom: 10rem;
+}
+
+.termsText h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.termsText p {
+  /* font-size: 1.2rem; */
+  font-weight: 400;
+  text-align: justify;
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.mailLink {
+  color: var(--dark-green);
+  text-decoration: underline;
+  transition: all 0.2s ease-in-out;
+}
+
+.mailLink:hover {
+  color: var(--light-green);
+}

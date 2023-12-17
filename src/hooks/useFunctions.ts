@@ -120,9 +120,27 @@ export const useFunctions = () => {
     });
   }
 
+  const getTimeFromDate = (dateStr: string) => {
+    // covert string to date
+    var date = new Date(dateStr);
+    // convert to 12 hour time format
+    var datetime = date.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    return datetime;
+  };
+
+  const getTimeAgo = (dateStr: string) => {
+    return dateStr.split("T")[0];
+  };
+
   return {
     handleDownload,
     handleUpload,
     toDecimalPlaces,
+    getTimeFromDate,
+    getTimeAgo,
   };
 };

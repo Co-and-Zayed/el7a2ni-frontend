@@ -34,9 +34,15 @@ import ViewPackageScreen from "VirtualClinic/screens/VirtualClinicScreens/User S
 import MyFamilyPackagesScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/PackagesScreen/MyFamilyPackagesScreen";
 import FamilyMemberPackageScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/PackagesScreen/FamilyMemberPackageScreen";
 import VideoCallScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/VideoCallScreen/VideoCallScreen";
+
 import DoctorPrescriptionsScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Doctor Screens/PrescriptionsScreen/PrescriptionsScreen";
 import DoctorPrescriptionDetailsScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Doctor Screens/PrescriptionsScreen/PrescriptionDetailsScreen";
 import NotificationsScreen from "VirtualClinic/screens/VirtualClinicScreens/CommonScreens/NotificationsScreen/NotificationsScreen";
+
+import PatientChatScreen from "components/ChatScreen/ChatScreen";
+import DoctorChatScreen from "components/DoctorChatScreen/ChatScreen";
+import store from "VirtualClinic/redux/store";
+import CommonChatScreen from "components/CommonChatScreen/CommonChatScreen";
 
 export const routes = [
   {
@@ -215,5 +221,12 @@ export const routes = [
     element: <NotificationsScreen />,
     system: "/clinic",
     parent: <ProtectedRoutes />
-  }
+  },
+  {
+    path: Routes.CHAT_PATH,
+    system: "/clinic",
+    element: <CommonChatScreen />,
+    parent: <ProtectedRoutes />,
+  },
+
 ];

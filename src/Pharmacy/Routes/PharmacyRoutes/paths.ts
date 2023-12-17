@@ -23,3 +23,4 @@ export const VIEW_SALES_REPORT_PATH = "/view-sales-report";
 
 export const NOTIFICATIONS_PATH = "/notifications";
 
+export const CHAT_PATH = "/chats/:recepientId";
