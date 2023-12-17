@@ -109,3 +109,6 @@ export const archiveMedicine = () => {
 export const unarchiveMedicine = () => {
   return `pharmacist/unarchiveMedicine`;
 };
+export const getMedicinesPatient = () => {
+  return `patient/getMedicinesPatient`;
+};

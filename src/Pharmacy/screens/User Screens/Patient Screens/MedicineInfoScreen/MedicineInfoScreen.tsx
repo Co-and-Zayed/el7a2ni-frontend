@@ -390,7 +390,15 @@ const MedicineInfoScreen: FC<MedicineInfoScreenProps> = ({
               {medicine?.availableQuantity > 0 ? (
                 <>
                   <Counter
-                    maxAmount={medicine?.availableQuantity}
+                    maxAmount={
+                      "remainingQuantity" in medicine &&
+                      medicine?.remainingQuantity !== null
+                        ? Math.min(
+                            medicine?.availableQuantity,
+                            medicine?.remainingQuantity
+                          )
+                        : medicine?.availableQuantity
+                    }
                     quantity={quantity}
                     setQuantity={setQuantity}
                     width={6}
