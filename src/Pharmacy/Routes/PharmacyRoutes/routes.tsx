@@ -117,6 +117,7 @@ export const routes = [
     element: <NotificationsScreen />,
     system: system
   },
+  {
     path: Routes.CHAT_PATH,
     system: system,
     element: <CommonChatScreen />,
