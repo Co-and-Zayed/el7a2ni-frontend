@@ -35,4 +35,11 @@ export const FAMILY_MEMBER_PACKAGE_PATH = "/familyMemberPackage";
 
 export const VIDEO_CALL_PATH = "/video-call";
 
+
+export const VIEW_PRESCRIPTIONS_DOCTOR_PATH = "/viewPrescriptions";
+export const PRESCRIPTION_DETAILS_DOCTOR_PATH = "/viewSelectedPrescription/:id";
+export const GET_AVAILABLE_MEDICINES_PATH = "/getAvailableMedicines";
+
+export const NOTIFICATIONS_PATH = "/notifications";
 export const CHAT_PATH = "/chats/:recepientId";
+

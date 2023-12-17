@@ -162,3 +162,22 @@ export const unsubscribeFromPackage = () => {
 export const unsubscribeFromPackageForFamily = () => {
   return `patient/unsubscribeFromPackageForFamily`;
 };
+
+export const viewPrescriptionsDoctor = () => {
+  return `doctor/getAllPrescriptions`;
+};
+export const getAvailableMedicines = () => {
+  return `doctor/getAvailableMedicines`;
+};
+export const addMedicineToPrescription = () => {
+  return `doctor/addMedicineToPrescription`;
+};
+export const deleteMedicineFromPrescription = () => {
+  return `doctor/deleteMedicineFromPrescription`;
+};
+export const addPrescription = () => {
+  return `doctor/addPrescription`;
+};
+export const updatePrescription = () => {
+  return `doctor/updatePrescription`;
+};

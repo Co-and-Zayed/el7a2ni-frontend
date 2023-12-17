@@ -13,6 +13,8 @@ import NotFoundScreen from "Pharmacy/screens/NotFoundScreen/NotFoundScreen";
 import BuyMedicineScreen from "Pharmacy/screens/User Screens/Patient Screens/MedicineScreen/BuyMedicineScreen";
 import OrderScreen from "Pharmacy/screens/User Screens/Patient Screens/OrderScreen/OrderScreen";
 import ForgotPassword from "Pharmacy/screens/ForgotPasswordScreen/ForgotPassword";
+import ViewSalesReportScreen from "Pharmacy/screens/User Screens/Pharmacist Screens/SalesReportScreen/ViewSalesReportScreen";
+import NotificationsScreen from "Pharmacy/screens/NotificationsScreen/NotificationScreen";
 import CommonChatScreen from "components/CommonChatScreen/CommonChatScreen";
 
 const system = "/pharmacy";
@@ -104,6 +106,17 @@ export const routes = [
     system: system,
   },
   {
+    path: Routes.VIEW_SALES_REPORT_PATH,
+    parent: <ProtectedRoutes />,
+    element: <ViewSalesReportScreen/>,
+    system: system,
+  },
+  {
+    path: Routes.NOTIFICATIONS_PATH,
+    parent: <ProtectedRoutes />,
+    element: <NotificationsScreen />,
+    system: system
+  },
     path: Routes.CHAT_PATH,
     system: system,
     element: <CommonChatScreen />,

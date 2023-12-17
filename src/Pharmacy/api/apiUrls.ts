@@ -25,3 +25,4 @@ export const verifyOtpUrl = () => {
 export const resetPasswordUrl = (type: any) => {
   return `${type}/resetPassword`;
 }
+

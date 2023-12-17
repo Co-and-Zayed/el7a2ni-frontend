@@ -122,6 +122,11 @@ export const navLinksDoctor = [
     icon: <AppointmentsIcon />,
   },
   {
+    name: "Prescriptions",
+    route: Routes.VIEW_PRESCRIPTIONS_DOCTOR_PATH,
+    icon: <PrescriptionsIcon />,
+  },
+  {
     name: "Pharm Support",
     route: Routes.CHAT_PATH,
     icon: <ChatIcon />,

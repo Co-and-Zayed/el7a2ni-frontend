@@ -94,6 +94,11 @@ export const navLinksPharmacist = [
     icon: <PrescriptionsIcon />,
   },
   {
+    name: "Sales Reports",
+    route: Routes.VIEW_SALES_REPORT_PATH,
+    icon: <PrescriptionsIcon />,
+  },
+  {
     name: "Customer Support",
     route: Routes.CHAT_PATH,
     icon: <ChatIcon />,
@@ -112,6 +117,11 @@ export const navLinksAdmin = [
   {
     name: "Patients",
     route: Routes.VIEW_PATIENTS_PATH,
+  },
+  {
+    name: "Sales Reports",
+    route: Routes.VIEW_SALES_REPORT_PATH,
+    icon: <PrescriptionsIcon />,
   },
 ];
 

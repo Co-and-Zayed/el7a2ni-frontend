@@ -35,6 +35,7 @@ import JellyLoader from "Pharmacy/components/JellyLoader/JellyLoader";
 import Counter from "Pharmacy/components/Counter/Counter";
 import AnimatedDigits from "Pharmacy/components/AnimatedDigits/AnimatedDigits";
 import AnimatedDigitsLarge from "Pharmacy/components/AnimatedDigitsLarge/AnimatedDigitsLarge";
+import { getMedicinesPatientAction } from "Pharmacy/redux/PharmacyRedux/GetMedicinesPatient/getMedicinesPatientAction";
 
 //////////////////////////////////// START OF CODE
 interface DataType {
@@ -77,11 +78,21 @@ const MedicineInfoScreen: FC<MedicineInfoScreenProps> = ({
   const [openEditModal, setOpenEditModal] = useState(false);
 
   const [reload, setReload] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const [quantity, setQuantity] = useState(
     initialQuantity < 0 ? 1 : initialQuantity
   );
+  const { getMedicinesPatientLoading, getMedicinesPatient } = useSelector(
+    (state: RootState) => state.getMedicinesPatientReducer
+  );
 
+  useEffect(() => {
+    dispatch(getMedicinesPatientAction({ id: userData?._id }));
+  }, [refresh]);
+  const myMedicine = getMedicinesPatient.find(
+    (medicine: any) => medicine._id === searchParams.get("id")
+  );
   // States for all the input fields
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -91,6 +102,9 @@ const MedicineInfoScreen: FC<MedicineInfoScreenProps> = ({
   const [otherActiveIngredients, setOtherActiveIngredients] = useState([]);
   const [medicinalUse, setMedicinalUse] = useState([]);
   const [availableQuantity, setAvailableQuantity] = useState(0);
+  const [remainingQuantity, setRemainingQuantity] = useState(
+    myMedicine.remainingQuantity
+  );
 
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [showMedicine, setShowMedicine] = useState<boolean>(false);
@@ -125,6 +139,7 @@ const MedicineInfoScreen: FC<MedicineInfoScreenProps> = ({
         setOtherActiveIngredients(medicine.otherActiveIngredients);
         setMedicinalUse(medicine.medicinalUse);
         setAvailableQuantity(medicine.availableQuantity);
+        setRemainingQuantity(myMedicine.remainingQuantity);
       } catch (err) {}
       setShowMedicine(true);
     };
@@ -390,7 +405,14 @@ const MedicineInfoScreen: FC<MedicineInfoScreenProps> = ({
               {medicine?.availableQuantity > 0 ? (
                 <>
                   <Counter
-                    maxAmount={medicine?.availableQuantity}
+                    maxAmount={
+                      medicine?.type === "PRESCRIPTION"
+                        ? Math.min(
+                            medicine?.availableQuantity,
+                            remainingQuantity
+                          )
+                        : medicine?.availableQuantity
+                    }
                     quantity={quantity}
                     setQuantity={setQuantity}
                     width={6}

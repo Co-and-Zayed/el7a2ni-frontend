@@ -53,7 +53,16 @@ import { listAllMedicinesReducer } from "Pharmacy/redux/PharmacyRedux/ListAllMed
 import { allMedicinalUsesReducer } from "Pharmacy/redux/PharmacyRedux/Dropdowns/AllMedicinalUses/allMedicinalUsesReducer";
 import { patientCartReducer } from "Pharmacy/redux/PharmacyRedux/PatientCart/patientCartReducer";
 import { ordersReducer } from "Pharmacy/redux/PharmacyRedux/ListAllOrders/ordersReducer";
-
+import { viewPrescriptionsDoctorReducer } from "./VirtualClinicRedux/ViewPrescriptionsDoctor/viewPrescriptionsDoctorReducer";
+import { getAvailableMedicinesReducer } from "./VirtualClinicRedux/GetAvailableMedicines/getAvailableMedicinesReducer";
+import { addMedicineToPrescriptionReducer } from "./VirtualClinicRedux/AddMedicinetoPrescription/addMedicineToPrescriptionReducer";
+import { deleteMedicineFromPrescriptionReducer } from "./VirtualClinicRedux/DeleteMedicineFromPrescription/deleteMedicineFromPrescriptionReducer";
+import { addPrescriptionReducer } from "./VirtualClinicRedux/AddPrescription/addPrescriptionReducer";
+import { updatePrescriptionReducer } from "./VirtualClinicRedux/UpdatePrescription/updatePrescriptionReducer";
+import { viewSalesReportsReducer } from "Pharmacy/redux/PharmacyRedux/ViewSalesReport/viewSalesReportsReducer";
+import { archiveMedicineReducer } from "Pharmacy/redux/PharmacyRedux/ArchiveMedicine/archiveMedicineReducer";
+import { unarchiveMedicineReducer } from "Pharmacy/redux/PharmacyRedux/UnarchiveMedicine/unarchiveMedicinReducer";
+import { getMedicinesPatientReducer } from "Pharmacy/redux/PharmacyRedux/GetMedicinesPatient/getMedicinesPatientReducer";
 export const appReducer = combineReducers({
   // VIRTUAL CLINIC
   videoCallReducer,
@@ -117,6 +126,16 @@ export const appReducer = combineReducers({
   // forgetPasswordReducer,
   // verifyOtpReducer,
   // resetPasswordReducer,
+  viewPrescriptionsDoctorReducer,
+  getAvailableMedicinesReducer,
+  addMedicineToPrescriptionReducer,
+  deleteMedicineFromPrescriptionReducer,
+  addPrescriptionReducer,
+  updatePrescriptionReducer,
+  viewSalesReportsReducer,
+  archiveMedicineReducer,
+  unarchiveMedicineReducer,
+  getMedicinesPatientReducer,
 });
 
 export const rootReducers = (state: any, action: any) => {

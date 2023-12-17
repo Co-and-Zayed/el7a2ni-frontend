@@ -34,6 +34,11 @@ import ViewPackageScreen from "VirtualClinic/screens/VirtualClinicScreens/User S
 import MyFamilyPackagesScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/PackagesScreen/MyFamilyPackagesScreen";
 import FamilyMemberPackageScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/PackagesScreen/FamilyMemberPackageScreen";
 import VideoCallScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Patient Screens/VideoCallScreen/VideoCallScreen";
+
+import DoctorPrescriptionsScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Doctor Screens/PrescriptionsScreen/PrescriptionsScreen";
+import DoctorPrescriptionDetailsScreen from "VirtualClinic/screens/VirtualClinicScreens/User Screens/Doctor Screens/PrescriptionsScreen/PrescriptionDetailsScreen";
+import NotificationsScreen from "VirtualClinic/screens/VirtualClinicScreens/CommonScreens/NotificationsScreen/NotificationsScreen";
+
 import PatientChatScreen from "components/ChatScreen/ChatScreen";
 import DoctorChatScreen from "components/DoctorChatScreen/ChatScreen";
 import store from "VirtualClinic/redux/store";
@@ -200,9 +205,28 @@ export const routes = [
     element: <ForgetPasswordScreen />,
   },
   {
+    path: Routes.VIEW_PRESCRIPTIONS_DOCTOR_PATH,
+    element: <DoctorPrescriptionsScreen />,
+    system: "/clinic",
+    parent: <ProtectedRoutes />,
+  },
+  {
+    path: Routes.PRESCRIPTION_DETAILS_DOCTOR_PATH,
+    element: <DoctorPrescriptionDetailsScreen />,
+    system: "/clinic",
+    parent: <ProtectedRoutes />,
+  },
+  {
+    path: Routes.NOTIFICATIONS_PATH,
+    element: <NotificationsScreen />,
+    system: "/clinic",
+    parent: <ProtectedRoutes />
+  },
+  {
     path: Routes.CHAT_PATH,
     system: "/clinic",
     element: <CommonChatScreen />,
     parent: <ProtectedRoutes />,
   },
+
 ];

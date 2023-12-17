@@ -44,6 +44,7 @@ import RoundedButton from "Pharmacy/components/RoundedButton/RoundedButton";
 import RightArrowIcon from "Pharmacy/assets/IconComponents/RightArrowIcon";
 import { GET_CART } from "Pharmacy/redux/PharmacyRedux/types";
 import { useNav } from "Pharmacy/hooks/useNav";
+import { getMedicinesPatientAction } from "Pharmacy/redux/PharmacyRedux/GetMedicinesPatient/getMedicinesPatientAction";
 
 interface DataType {
   patientEmail: string;
@@ -194,12 +195,16 @@ const MedicineScreen = () => {
     (state: RootState) => state.userReducer
   );
 
-  const { medicinesLoading, allMedicines } = useSelector(
-    (state: RootState) => state.listAllMedicinesReducer
+  const { getMedicinesPatientLoading, getMedicinesPatient } = useSelector(
+    (state: RootState) => state.getMedicinesPatientReducer
   );
 
   const { medicinalUsesLoading, allMedicinalUses } = useSelector(
     (state: RootState) => state.allMedicinalUsesReducer
+  );
+
+  const { medicinesLoading, allMedicines } = useSelector(
+    (state: RootState) => state.listAllMedicinesReducer
   );
 
   function isSubset(subsetArray: any, mainArray: any) {
@@ -207,7 +212,7 @@ const MedicineScreen = () => {
   }
 
   const handleSearchClick = () => {
-    const filteredMedicines = allMedicines.filter((medicine: any) =>
+    const filteredMedicines = getMedicinesPatient.filter((medicine: any) =>
       medicine.name.toLowerCase().includes(searchText?.toLowerCase())
     );
 
@@ -222,12 +227,24 @@ const MedicineScreen = () => {
   const dispatch: any = useDispatch();
 
   useEffect(() => {
-    dispatch(listAllMedicinesAction());
+    if (userType === "PATIENT") {
+      dispatch(getMedicinesPatientAction({ id: userData?._id }));
+    } else {
+      dispatch(listAllMedicinesAction());
+    }
     dispatch(allMedicinalUsesAction());
   }, [refresh]);
 
   useEffect(() => {
-    setCurrAllMedicines(allMedicines);
+    if (userType === "PATIENT") {
+      setCurrAllMedicines(getMedicinesPatient);
+    }
+  }, [getMedicinesPatient]);
+
+  useEffect(() => {
+    if (userType === "PHARMACIST") {
+      setCurrAllMedicines(allMedicines);
+    }
   }, [allMedicines]);
 
   useEffect(() => {
@@ -260,6 +277,14 @@ const MedicineScreen = () => {
       handleSearchClick();
     }
   };
+
+  const otcMedicines = currAllMedicines?.filter(
+    (medicine: any) => medicine?.type === "OTC"
+  );
+
+  const prescriptionMedicines = currAllMedicines?.filter(
+    (medicine: any) => medicine?.type === "PRESCRIPTION"
+  );
 
   return (
     <div className={`w-full flex flex-col items-start justify-center`}>
@@ -451,8 +476,14 @@ const MedicineScreen = () => {
           </div>
         )}
       </div>
-      <div className="flex flex-wrap gap-6">
-        {currAllMedicines?.map((medicine: any) => (
+      <h2 className="text-2xl font-bold mt-4 mb-4">
+        Over the Counter Medicines
+      </h2>
+      <div className="w-full flex flex-wrap gap-6">
+        {/* Over the Counter Medicines Section */}
+        {otcMedicines?.map((medicine: any) => (
+          // Render medicine card for OTC medicines
+          // ... (existing code for rendering medicine card)
           <div
             className={`flex flex-col ${styles.mainContainer}`}
             onClick={() => {
@@ -550,6 +581,111 @@ const MedicineScreen = () => {
           </div>
         ))}
       </div>
+
+      <h2 className="text-2xl font-bold mt-10 mb-4">Prescribed Medicines</h2>
+      <div className="w-full flex flex-wrap gap-6">
+        {/* Prescribed Medicines Section */}
+        {prescriptionMedicines?.map((medicine: any) => (
+          // Render medicine card for OTC medicines
+          // ... (existing code for rendering medicine card)
+          <div
+            className={`flex flex-col ${styles.mainContainer}`}
+            onClick={() => {
+              // navigate(`/medicine/${medicine._id}`);
+              navigate("/medicine?id=" + medicine._id);
+              // setViewMedicineModal(true);
+            }}
+          >
+            <div
+              className={`flex items-center justify-center ${styles.imageContainer}`}
+            >
+              <div
+                className={`${styles.image}`}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage: medicine?.picture?.includes("https")
+                    ? `url('${encodeURI(medicine.picture)})`
+                    : `url('${process.env.REACT_APP_BUCKET_URL}${medicine.picture}')`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  filter: "blur(5px)",
+                  position: "absolute",
+                }}
+              ></div>
+              <div
+                className={`${styles.image}`}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage: medicine?.picture?.includes("https")
+                    ? `url('${encodeURI(medicine.picture)})`
+                    : `url('${process.env.REACT_APP_BUCKET_URL}${medicine.picture}')`,
+                  backgroundSize: "contain",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  position: "absolute",
+                }}
+              ></div>
+              <p className={`${styles.viewDetails}`}>VIEW DETAILS</p>
+            </div>
+            <div
+              className={`w-full flex flex-col justify-between ${styles.dataContainer}`}
+            >
+              <div className="flex flex-col">
+                <div className={`flex ${styles.medicinalUse}`}>
+                  {medicine.medicinalUse.map(
+                    (medicinalUse: any, index: any) => (
+                      <>
+                        <p>{medicinalUse}</p>
+                        {index < medicine.medicinalUse.length - 1 && (
+                          <span> - </span>
+                        )}
+                      </>
+                    )
+                  )}
+                </div>
+                <h1>
+                  <Highlighter
+                    highlightStyle={{
+                      backgroundColor: "#ffc069",
+                      padding: 0,
+                    }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={
+                      medicine.name ? medicine.name.toString() : ""
+                    }
+                  />
+                </h1>
+                {userType === "PHARMACIST" && (
+                  // quantity
+                  <p
+                    className={`w-full flex justify-between text-teal-500 text-sm`}
+                  >
+                    QTY Left: {medicine.availableQuantity}
+                  </p>
+                )}
+              </div>
+              {/* <p className="threeLineEllipsis">{medicine.description}</p> */}
+              {/* <p className={`w-full flex justify-between`}>
+                {userType === "PHARMACIST" && <p>{medicine.totalSales} Sold</p>}
+                <p>EGP {medicine.price}</p>
+              </p> */}
+              <div
+                className={`flex items-center justify-between ${styles.priceContainer}`}
+              >
+                <div className="flex items-end">
+                  <p>{toDecimalPlaces(medicine.price, 2)}</p>
+                  <span>EGP</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* {check if the user type is patient or pharmacist} */}
       {viewMedicineModal &&
         (userType === "PATIENT" ? (
