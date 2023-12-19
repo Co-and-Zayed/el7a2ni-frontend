@@ -271,7 +271,7 @@ const SettingsScreen = () => {
               <p>
                 {key !== "slots"
                   ? doctorSettings[key].toString()
-                  : doctorSettings[key][0].time.toString()}
+                  : doctorSettings[key][0]?.time.toString()}
               </p>
               {["affiliation", "hourlyRate", "email"].includes(key) && (
                 <>
